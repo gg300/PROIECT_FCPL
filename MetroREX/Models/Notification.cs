@@ -7,7 +7,6 @@ public enum NotificationType
     Info
 }
 
-/// <summary>Notificare pentru utilizator (schimbare de preț, produs din nou în stoc).</summary>
 public class Notification
 {
     public NotificationType Type { get; set; }

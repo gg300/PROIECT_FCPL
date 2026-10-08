@@ -1,6 +1,5 @@
 namespace MetroREX.Models;
 
-/// <summary>Un produs din coș, cu prețul de la momentul adăugării.</summary>
 public class CartItem
 {
     public string ProductId { get; set; } = "";

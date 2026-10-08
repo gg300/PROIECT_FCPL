@@ -1,6 +1,5 @@
 namespace MetroREX.Models;
 
-/// <summary>Datele de profil cerute la crearea contului (și la checkout pentru vizitatori).</summary>
 public class UserProfile
 {
     public string Name { get; set; } = "";

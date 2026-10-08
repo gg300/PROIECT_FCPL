@@ -1,6 +1,5 @@
 namespace MetroREX.Models;
 
-/// <summary>Un produs dintr-o comandă (pentru istoric: preț × cantitate = total).</summary>
 public class OrderItem
 {
     public string ProductId { get; set; } = "";
@@ -8,7 +7,6 @@ public class OrderItem
     public decimal UnitPrice { get; set; }
     public int Quantity { get; set; }
 
-    /// <summary>Nota 1–5 dată după livrare; null = încă nenotat.</summary>
     public int? Rating { get; set; }
 
     public decimal Total => UnitPrice * Quantity;
@@ -24,7 +22,6 @@ public class Order
 
     public PaymentMethod PaymentMethod { get; set; }
 
-    /// <summary>Datele de livrare de la momentul comenzii (și pentru vizitatori).</summary>
     public UserProfile Profile { get; set; } = new();
 
     public string? CouponCode { get; set; }
@@ -33,6 +30,5 @@ public class Order
     public decimal Subtotal => Items.Sum(i => i.Total);
     public decimal TotalCost => Subtotal - DiscountAmount;
 
-    /// <summary>Livrată când data curentă >= data livrării.</summary>
     public bool IsDelivered(DateTime now) => now.Date >= DeliveryDate.Date;
 }

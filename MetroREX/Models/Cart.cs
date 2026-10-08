@@ -1,6 +1,5 @@
 namespace MetroREX.Models;
 
-/// <summary>Coșul de cumpărături al sesiunii curente (există și pentru vizitatori).</summary>
 public class Cart
 {
     public List<CartItem> Items { get; } = new();
@@ -8,7 +7,6 @@ public class Cart
     public decimal Subtotal => Items.Sum(i => i.Total);
     public bool IsEmpty => Items.Count == 0;
 
-    /// <summary>Adaugă produsul; dacă există deja în coș, mărește cantitatea.</summary>
     public void Add(Product product, int quantity)
     {
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
