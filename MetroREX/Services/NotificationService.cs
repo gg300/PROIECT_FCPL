@@ -69,11 +69,11 @@ internal sealed class NotificationService
         var percent = oldPrice <= 0
             ? 0
             : Math.Round(Math.Abs(newPrice - oldPrice) / oldPrice * 100m, MidpointRounding.AwayFromZero);
-        var direction = newPrice > oldPrice ? "a crescut" : "a scăzut";
+        var direction = newPrice > oldPrice ? "a crescut" : "a scazut";
 
         var message = string.Create(
             CultureInfo.InvariantCulture,
-            $"Produsul „{product.Name}”: prețul {direction} cu {percent}%, de la {Money.Format(oldPrice)} la {Money.Format(newPrice)}.");
+            $"Produsul „{product.Name}”: pretul {direction} cu {percent}%, de la {Money.Format(oldPrice)} la {Money.Format(newPrice)}.");
 
         NotifyWishListOwners(product.Id, NotificationType.PriceChanged, message);
     }

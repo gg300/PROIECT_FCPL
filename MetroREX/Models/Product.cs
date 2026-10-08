@@ -59,7 +59,7 @@ public class Product
 
     public void AddRating(int stars)
     {
-        if (stars is < 1 or > 5) throw new ArgumentOutOfRangeException(nameof(stars), "Rating între 1 și 5.");
+        if (stars is < 1 or > 5) throw new ArgumentOutOfRangeException(nameof(stars), "Rating intre 1 si 5.");
         RatingSum += stars;
         RatingCount++;
     }

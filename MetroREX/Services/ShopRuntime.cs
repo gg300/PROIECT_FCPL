@@ -64,7 +64,7 @@ internal sealed class ShopRuntime
 
         if (SynchronizationContext.Current is null)
         {
-            throw new InvalidOperationException("Procesele de fundal trebuie pornite din firul interfeței (UI).");
+            throw new InvalidOperationException("Procesele de fundal trebuie pornite din firul interfetei (UI).");
         }
 
         _clock.Changed += OnClockChanged;
@@ -104,9 +104,9 @@ internal sealed class ShopRuntime
 
         Guard("Cupoane expirate", () => _coupons.RemoveExpired());
         Guard("Cupon zilnic", () => _coupons.GenerateDailyCoupon());
-        Guard("Variația prețurilor", () => _pricing.ApplyDailyVariation());
-        Guard("Notificări de stoc", () => _inventory.ProcessDayStart());
-        Guard("Livrări", () => _orders.ProcessDeliveries());
+        Guard("Variatia preturilor", () => _pricing.ApplyDailyVariation());
+        Guard("Notificari de stoc", () => _inventory.ProcessDayStart());
+        Guard("Livrari", () => _orders.ProcessDeliveries());
         Guard("Salvare produse", _repository.SaveProducts);
         Guard("Salvare utilizatori", _repository.SaveUsers);
         Guard("Salvare stare", _repository.SaveState);

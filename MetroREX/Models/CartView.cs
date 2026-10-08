@@ -2,7 +2,7 @@ using MetroREX.Models;
  
 namespace MetroREX.Forms;
  
-/// <summary>Coșul de cumpărături: produse, cantități, total.</summary>
+/// <summary>Cosul de cumparaturi: produse, cantitati, total.</summary>
 internal sealed class CartView : ViewBase
 {
     private readonly DataGridView _grid;
@@ -12,14 +12,14 @@ internal sealed class CartView : ViewBase
     public CartView(ShopForm shell) : base(shell)
     {
         var column = Ui.Column(this);
-        Ui.AddRow(column, Ui.Title(this, "Coșul tău"));
+        Ui.AddRow(column, Ui.Title(this, "Cosul tau"));
  
         _message = Ui.Message(this);
         Ui.AddRow(column, _message);
  
         _grid = Ui.Grid(this,
             ("Produs", 40f, false),
-            ("Preț unitar", 18f, true),
+            ("Pret unitar", 18f, true),
             ("Cantitate", 14f, true),
             ("Total", 18f, true));
         Ui.AddRow(column, _grid, fill: true);
@@ -30,10 +30,10 @@ internal sealed class CartView : ViewBase
         var bar = Ui.Bar(this);
         bar.Controls.Add(Ui.SecondaryButton(this, "+ 1", (_, _) => ChangeQuantity(+1)));
         bar.Controls.Add(Ui.SecondaryButton(this, "− 1", (_, _) => ChangeQuantity(-1)));
-        bar.Controls.Add(Ui.SecondaryButton(this, "Șterge produsul", (_, _) => RemoveSelected()));
-        bar.Controls.Add(Ui.SecondaryButton(this, "Golește coșul", (_, _) => ClearCart()));
-        bar.Controls.Add(Ui.SecondaryButton(this, "Continuă cumpărăturile", (_, _) => Shell.GoHome()));
-        bar.Controls.Add(Ui.PrimaryButton(this, "Finalizează comanda", (_, _) => Checkout()));
+        bar.Controls.Add(Ui.SecondaryButton(this, "Sterge produsul", (_, _) => RemoveSelected()));
+        bar.Controls.Add(Ui.SecondaryButton(this, "Goleste cosul", (_, _) => ClearCart()));
+        bar.Controls.Add(Ui.SecondaryButton(this, "Continua cumparaturile", (_, _) => Shell.GoHome()));
+        bar.Controls.Add(Ui.PrimaryButton(this, "Finalizeaza comanda", (_, _) => Checkout()));
         Ui.AddRow(column, bar);
  
         Controls.Add(column);
@@ -62,7 +62,7 @@ internal sealed class CartView : ViewBase
             }
         }
  
-        _total.Text = cart.IsEmpty ? "Coșul este gol." : $"Total: {cart.Subtotal:N2} lei";
+        _total.Text = cart.IsEmpty ? "Cosul este gol." : $"Total: {cart.Subtotal:N2} lei";
         Shell.RefreshCartCount();
     }
  
@@ -71,27 +71,27 @@ internal sealed class CartView : ViewBase
         var item = SelectedItem;
         if (item is null)
         {
-            Ui.Say(_message, "Selectează mai întâi un produs din coș.", isError: true);
+            Ui.Say(_message, "Selecteaza mai intai un produs din cos.", isError: true);
             return;
         }
  
         var newQuantity = item.Quantity + delta;
         if (newQuantity < 1)
         {
-            Ui.Say(_message, "Cantitatea minimă este 1. Folosește „Șterge produsul” ca să îl scoți din coș.", isError: true);
+            Ui.Say(_message, "Cantitatea minima este 1. Foloseste „Sterge produsul” ca sa il scoti din cos.", isError: true);
             return;
         }
  
         var product = Services.Catalog.FindProduct(item.ProductId);
         if (product is null)
         {
-            Ui.Say(_message, "Produsul nu mai există în magazin.", isError: true);
+            Ui.Say(_message, "Produsul nu mai exista in magazin.", isError: true);
             return;
         }
  
         if (newQuantity > product.Quantity)
         {
-            Ui.Say(_message, $"Sunt disponibile doar {product.Quantity} bucăți.", isError: true);
+            Ui.Say(_message, $"Sunt disponibile doar {product.Quantity} bucati.", isError: true);
             return;
         }
  
@@ -106,12 +106,12 @@ internal sealed class CartView : ViewBase
         var item = SelectedItem;
         if (item is null)
         {
-            Ui.Say(_message, "Selectează mai întâi un produs din coș.", isError: true);
+            Ui.Say(_message, "Selecteaza mai intai un produs din cos.", isError: true);
             return;
         }
  
         Services.Cart.Remove(item.ProductId);
-        Ui.Say(_message, $"„{item.ProductName}” a fost scos din coș.");
+        Ui.Say(_message, $"„{item.ProductName}” a fost scos din cos.");
         Reload(selectProductId: null);
     }
  
@@ -123,7 +123,7 @@ internal sealed class CartView : ViewBase
         }
  
         Services.Cart.Clear();
-        Ui.Say(_message, "Coșul a fost golit.");
+        Ui.Say(_message, "Cosul a fost golit.");
         Reload(selectProductId: null);
     }
  
@@ -131,11 +131,11 @@ internal sealed class CartView : ViewBase
     {
         if (Services.Cart.Current.IsEmpty)
         {
-            Ui.Say(_message, "Coșul este gol.", isError: true);
+            Ui.Say(_message, "Cosul este gol.", isError: true);
             return;
         }
  
-        // TODO: ecranul de finalizare (adresă, plată, cupon) folosește Services.Checkout.
-        Ui.Note(_message, "Ecranul de finalizare a comenzii urmează să fie construit.");
+        // TODO: ecranul de finalizare (adresa, plata, cupon) foloseste Services.Checkout.
+        Ui.Note(_message, "Ecranul de finalizare a comenzii urmeaza sa fie construit.");
     }
 }

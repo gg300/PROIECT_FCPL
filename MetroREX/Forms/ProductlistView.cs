@@ -3,7 +3,6 @@ using MetroREX.Services;
  
 namespace MetroREX.Forms;
  
-/// <summary>Produsele unei categorii, cu sortare după preț și adăugare în coș.</summary>
 internal sealed class ProductListView : ViewBase
 {
     private readonly string _category;
@@ -24,8 +23,8 @@ internal sealed class ProductListView : ViewBase
         Ui.AddRow(column, _count);
  
         var sortBar = Ui.Bar(this);
-        sortBar.Controls.Add(Ui.SecondaryButton(this, "Preț crescător", (_, _) => SetSort(PriceSort.Ascending)));
-        sortBar.Controls.Add(Ui.SecondaryButton(this, "Preț descrescător", (_, _) => SetSort(PriceSort.Descending)));
+        sortBar.Controls.Add(Ui.SecondaryButton(this, "Pret crescator", (_, _) => SetSort(PriceSort.Ascending)));
+        sortBar.Controls.Add(Ui.SecondaryButton(this, "Pret descrescator", (_, _) => SetSort(PriceSort.Descending)));
         sortBar.Controls.Add(Ui.SecondaryButton(this, "Alfabetic", (_, _) => SetSort(PriceSort.None)));
         Ui.AddRow(column, sortBar);
  
@@ -34,7 +33,7 @@ internal sealed class ProductListView : ViewBase
  
         _grid = Ui.Grid(this,
             ("Produs", 45f, false),
-            ("Preț", 15f, true),
+            ("Pret", 15f, true),
             ("Stoc", 12f, true),
             ("Evaluare", 28f, false));
         _grid.CellDoubleClick += (_, e) =>
@@ -47,7 +46,7 @@ internal sealed class ProductListView : ViewBase
         Ui.AddRow(column, _grid, fill: true);
  
         var actions = Ui.Bar(this);
-        actions.Controls.Add(Ui.PrimaryButton(this, "Adaugă în coș", (_, _) => AddSelectedToCart()));
+        actions.Controls.Add(Ui.PrimaryButton(this, "Adauga in cos", (_, _) => AddSelectedToCart()));
         Ui.AddRow(column, actions);
  
         Controls.Add(column);
@@ -62,7 +61,7 @@ internal sealed class ProductListView : ViewBase
  
     private void Reload()
     {
-        // Dacă utilizatorul apasă „Înapoi”, ecranul revine cu aceeași sortare.
+        // Daca utilizatorul apasa „Inapoi”, ecranul revine cu aceeasi sortare.
         var sort = _sort;
         Shell.SetCurrentFactory(() => new ProductListView(Shell, _category, sort));
  
@@ -80,25 +79,25 @@ internal sealed class ProductListView : ViewBase
             _grid.Rows[index].Tag = product;
         }
  
-        Ui.Note(_message, "Dublu-click pe un produs sau „Adaugă în coș” pentru a-l adăuga.");
+        Ui.Note(_message, "Dublu-click pe un produs sau „Adauga in cos” pentru a-l adauga.");
     }
  
     private void AddSelectedToCart()
     {
         if (_grid.CurrentRow?.Tag is not Product product)
         {
-            Ui.Say(_message, "Selectează mai întâi un produs.", isError: true);
+            Ui.Say(_message, "Selecteaza mai intai un produs.", isError: true);
             return;
         }
  
         if (Services.Cart.AvailableQuantity(product) < 1)
         {
-            Ui.Say(_message, "Nu mai există stoc disponibil pentru acest produs.", isError: true);
+            Ui.Say(_message, "Nu mai exista stoc disponibil pentru acest produs.", isError: true);
             return;
         }
  
         Services.Cart.Add(product.Id, 1);
         Shell.RefreshCartCount();
-        Ui.Say(_message, $"„{product.Name}” a fost adăugat în coș.");
+        Ui.Say(_message, $"„{product.Name}” a fost adaugat in cos.");
     }
 }

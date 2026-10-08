@@ -5,7 +5,7 @@ namespace MetroREX.Forms;
  
 internal sealed class ShopForm : Form
 {
-    private const string SyncOperation = "Sincronizare Excel"; // același text ca în ShopRuntime
+    private const string SyncOperation = "Sincronizare Excel"; // acelasi text ca in ShopRuntime
  
     private readonly Stack<Func<ViewBase>> _history = new();
     private readonly Panel _host;
@@ -32,13 +32,13 @@ internal sealed class ShopForm : Form
         MinimumSize = LogicalToDeviceUnits(new Size(1000, 640));
         DoubleBuffered = true;
  
-        _backButton = Ui.SecondaryButton(this, "← Înapoi", (_, _) => Back());
+        _backButton = Ui.SecondaryButton(this, "← Inapoi", (_, _) => Back());
         _backButton.Visible = false;
         var categories = Ui.SecondaryButton(this, "Categorii", (_, _) => GoHome());
-        _cartButton = Ui.PrimaryButton(this, "Coș (0)", (_, _) => OpenCart());
+        _cartButton = Ui.PrimaryButton(this, "Cos (0)", (_, _) => OpenCart());
  
-        // TODO (pasul Login): aici apar și Comenzi active, Istoric, Wish list, Cupoane, Setări, Logout,
-        // afișate doar când Services.Session.IsLoggedIn (vezi evenimentul Session.Changed).
+        // TODO (pasul Login): aici apar si Comenzi active, Istoric, Wish list, Cupoane, Setari, Logout,
+        // afisate doar cand Services.Session.IsLoggedIn (vezi evenimentul Session.Changed).
         _actions = new FlowLayoutPanel
         {
             Dock = DockStyle.Right,
@@ -85,14 +85,14 @@ internal sealed class ShopForm : Form
         Controls.Add(_host);
         Controls.Add(header);
         Controls.Add(_status);
-        _host.BringToFront(); // zona ecranelor ocupă spațiul rămas între antet și bara de stare
+        _host.BringToFront(); // zona ecranelor ocupa spatiul ramas intre antet si bara de stare
     }
  
     public ShopServices Services { get; }
  
     // ===== Navigare =====
  
-    /// <summary>Deschide un ecran nou; cel curent rămâne în istoric pentru „Înapoi”.</summary>
+    /// <summary>Deschide un ecran nou; cel curent ramane in istoric pentru „Inapoi”.</summary>
     public void Navigate(Func<ViewBase> factory)
     {
         ArgumentNullException.ThrowIfNull(factory);
@@ -120,13 +120,13 @@ internal sealed class ShopForm : Form
         Navigate(() => new CategoriesView(this));
     }
  
-    /// <summary>Schimbă „rețeta” ecranului curent fără să-l reconstruiască (ex.: ordinea de sortare aleasă).</summary>
+    /// <summary>Schimba „reteta” ecranului curent fara sa-l reconstruiasca (ex.: ordinea de sortare aleasa).</summary>
     public void SetCurrentFactory(Func<ViewBase> factory) => _currentFactory = factory;
  
     public void RefreshCartCount() =>
-        _cartButton.Text = $"Coș ({Services.Cart.Current.Items.Sum(item => item.Quantity)})";
+        _cartButton.Text = $"Cos ({Services.Cart.Current.Items.Sum(item => item.Quantity)})";
  
-    /// <summary>Blochează navigarea cât timp se trimite o comandă.</summary>
+    /// <summary>Blocheaza navigarea cat timp se trimite o comanda.</summary>
     public void SetBusy(bool busy)
     {
         _actions.Enabled = !busy;
@@ -206,7 +206,7 @@ internal sealed class ShopForm : Form
     }
  
     private void OnDayStarted(object? sender, EventArgs e) =>
-        SetStatus("A început o zi nouă: prețurile și cupoanele au fost actualizate.", isError: false);
+        SetStatus("A inceput o zi noua: preturile si cupoanele au fost actualizate.", isError: false);
  
     private void SetStatus(string text, bool isError)
     {
@@ -215,8 +215,8 @@ internal sealed class ShopForm : Form
         _statusIsError = isError;
     }
  
-    // ===== Schimbarea datei pentru testare (cerința „metodă specială pentru dată/oră”) =====
-    // Ctrl+Shift+D = +1 zi, Ctrl+Shift+R = înapoi la ceasul real.
+    // ===== Schimbarea datei pentru testare (cerinta „metoda speciala pentru data/ora”) =====
+    // Ctrl+Shift+D = +1 zi, Ctrl+Shift+R = inapoi la ceasul real.
  
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
@@ -239,7 +239,7 @@ internal sealed class ShopForm : Form
  
     private void ReportClock() => SetStatus(
         Services.Clock.IsOverridden
-            ? $"Mod test: data simulată {Services.Clock.Now:dd-MM-yyyy HH:mm}"
-            : "Ceasul a fost resetat la ora reală.",
+            ? $"Mod test: data simulata {Services.Clock.Now:dd-MM-yyyy HH:mm}"
+            : "Ceasul a fost resetat la ora reala.",
         isError: false);
 }

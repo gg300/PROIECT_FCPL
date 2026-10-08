@@ -50,7 +50,7 @@ internal sealed class CouponService
 
         if (!Coupon.IsValidFormat(code))
         {
-            return Result.Failure<Coupon>("Codul trebuie să aibă forma AAA-BBB-CCC (litere și cifre).");
+            return Result.Failure<Coupon>("Codul trebuie sa aiba forma AAA-BBB-CCC (litere si cifre).");
         }
 
         var normalized = Coupon.NormalizeCode(code);
@@ -58,7 +58,7 @@ internal sealed class CouponService
 
         if (storeCoupon is null)
         {
-            return Result.Failure<Coupon>("Cuponul nu există.");
+            return Result.Failure<Coupon>("Cuponul nu exista.");
         }
 
         if (storeCoupon.IsExpired(_clock.Now))
@@ -68,7 +68,7 @@ internal sealed class CouponService
 
         if (user.Coupons.Any(coupon => coupon.Code == normalized))
         {
-            return Result.Failure<Coupon>("Ai adăugat deja acest cupon.");
+            return Result.Failure<Coupon>("Ai adaugat deja acest cupon.");
         }
 
         var owned = storeCoupon.Clone();

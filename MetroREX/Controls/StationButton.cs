@@ -2,11 +2,7 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>
-/// Un buton-card din meniu („stația” de metrou). Desenat manual,
-/// ca să arate la fel ca în varianta web: hover cu umbră verde,
-/// contur punctat pentru „fără cont”, contur galben la focus din tastatură.
-/// </summary>
+
 internal class StationButton : Control
 {
     private bool _hover;
@@ -15,13 +11,13 @@ internal class StationButton : Control
     public string Info { get; set; } = "";
     public bool IsGuest { get; set; }
 
-    /// <summary>True când mouse-ul e deasupra sau are focus (cercul stației se face verde).</summary>
+    /// <summary>True cand mouse-ul e deasupra sau are focus (cercul statiei se face verde).</summary>
     public bool IsActive => _hover || Focused;
 
-    /// <summary>Anunță părintele să redeseneze cercul stației.</summary>
+    /// <summary>Anunta parintele sa redeseneze cercul statiei.</summary>
     public event EventHandler? VisualStateChanged;
 
-    // Spațiu lăsat în jurul cardului pentru umbră și conturul de focus
+    // Spatiu lasat in jurul cardului pentru umbra si conturul de focus
     private int MarginLeft   => LogicalToDeviceUnits(10);
     private int MarginTop    => LogicalToDeviceUnits(5);
     private int MarginRight  => LogicalToDeviceUnits(10);
@@ -67,7 +63,7 @@ internal class StationButton : Control
             g.FillPath(shadowBrush, shadowPath);
         }
 
-        // Cardul alb + contur (punctat pentru „fără cont”)
+        // Cardul alb + contur (punctat pentru „fara cont”)
         using (var path = Theme.RoundedRect(card, Radius))
         using (var paper = new SolidBrush(Theme.Paper))
         using (var border = new Pen(Theme.Ink, 2) { DashStyle = IsGuest ? DashStyle.Dash : DashStyle.Solid })
@@ -76,7 +72,7 @@ internal class StationButton : Control
             g.DrawPath(border, path);
         }
 
-        // Contur galben doar când focusul vine din tastatură (Tab)
+        // Contur galben doar cand focusul vine din tastatura (Tab)
         if (Focused && ShowFocusCues)
         {
             var focusRect = card;
@@ -100,7 +96,7 @@ internal class StationButton : Control
             Theme.Muted, TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis);
     }
 
-    // ===== Starea vizuală =====
+    // ===== Starea vizuala =====
     private void SetHover(bool value)
     {
         if (_hover == value) return;
@@ -126,7 +122,7 @@ internal class StationButton : Control
         VisualStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    // ===== Enter / Space apasă butonul, ca la un buton normal =====
+    // ===== Enter / Space apasa butonul, ca la un buton normal =====
     protected override bool IsInputKey(Keys keyData) =>
         keyData is Keys.Enter or Keys.Space || base.IsInputKey(keyData);
 

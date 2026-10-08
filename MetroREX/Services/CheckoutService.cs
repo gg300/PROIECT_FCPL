@@ -34,7 +34,7 @@ internal sealed class CheckoutService
         var cart = _session.Cart;
         if (cart.IsEmpty)
         {
-            return Result.Failure<OrderQuote>("Coșul este gol.");
+            return Result.Failure<OrderQuote>("Cosul este gol.");
         }
 
         var lines = new List<(OrderItem Item, Product Product)>();
@@ -46,13 +46,13 @@ internal sealed class CheckoutService
 
             if (product is null)
             {
-                return Result.Failure<OrderQuote>($"Produsul „{cartItem.ProductName}” nu mai este în magazin.");
+                return Result.Failure<OrderQuote>($"Produsul „{cartItem.ProductName}” nu mai este in magazin.");
             }
 
             if (cartItem.Quantity > product.Quantity)
             {
                 return Result.Failure<OrderQuote>(
-                    $"Din „{product.Name}” sunt disponibile doar {product.Quantity} bucăți.");
+                    $"Din „{product.Name}” sunt disponibile doar {product.Quantity} bucati.");
             }
 
             lines.Add((
@@ -141,7 +141,7 @@ internal sealed class CheckoutService
     {
         if (_session.CurrentUser is not { } user)
         {
-            return Result.Failure<Coupon>("Cupoanele pot fi folosite doar de utilizatorii autentificați.");
+            return Result.Failure<Coupon>("Cupoanele pot fi folosite doar de utilizatorii autentificati.");
         }
 
         var normalized = Coupon.NormalizeCode(code);
@@ -149,7 +149,7 @@ internal sealed class CheckoutService
 
         if (coupon is null)
         {
-            return Result.Failure<Coupon>("Nu ai acest cupon în lista ta.");
+            return Result.Failure<Coupon>("Nu ai acest cupon in lista ta.");
         }
 
         if (coupon.IsExpired(_clock.Now))

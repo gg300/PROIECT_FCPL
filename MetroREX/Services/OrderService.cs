@@ -68,7 +68,7 @@ internal sealed class OrderService
 
         if (stars is < 1 or > 5)
         {
-            return Result.Failure("Nota trebuie să fie între 1 și 5.");
+            return Result.Failure("Nota trebuie sa fie intre 1 si 5.");
         }
 
         var order = user.Orders.FirstOrDefault(candidate =>
@@ -76,12 +76,12 @@ internal sealed class OrderService
 
         if (order is null)
         {
-            return Result.Failure("Comanda nu a fost găsită.");
+            return Result.Failure("Comanda nu a fost gasita.");
         }
 
         if (order.Status != OrderStatus.Delivered)
         {
-            return Result.Failure("Poți evalua produsele doar după livrare.");
+            return Result.Failure("Poti evalua produsele doar dupa livrare.");
         }
 
         var item = order.Items.FirstOrDefault(candidate =>
@@ -136,7 +136,7 @@ internal sealed class OrderService
             _notifications.Notify(
                 user,
                 NotificationType.Info,
-                $"Comanda {order.ShortId} a fost livrată. Te rugăm să evaluezi produsele primite.");
+                $"Comanda {order.ShortId} a fost livrata. Te rugam sa evaluezi produsele primite.");
         }
 
         _repository.SaveUsers();

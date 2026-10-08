@@ -47,7 +47,7 @@ internal sealed class WishListService
 
         if (Contains(product.Id))
         {
-            return Result.Failure("Produsul este deja în wish list.");
+            return Result.Failure("Produsul este deja in wish list.");
         }
 
         user.WishList.Add(product.Id);
@@ -65,7 +65,7 @@ internal sealed class WishListService
         var removed = user.WishList.RemoveAll(id => string.Equals(id, productId, StringComparison.OrdinalIgnoreCase));
         if (removed == 0)
         {
-            return Result.Failure("Produsul nu se află în wish list.");
+            return Result.Failure("Produsul nu se afla in wish list.");
         }
 
         _repository.SaveUsers();

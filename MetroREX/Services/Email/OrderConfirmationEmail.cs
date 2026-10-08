@@ -14,11 +14,11 @@ internal static class OrderConfirmationEmail
 
         var body = new StringBuilder();
 
-        body.AppendLine(Line($"Mulțumim pentru comandă, {order.Profile.Name}!"));
+        body.AppendLine(Line($"Multumim pentru comanda, {order.Profile.Name}!"));
         body.AppendLine();
         body.AppendLine(Line($"Comanda: {order.ShortId}"));
         body.AppendLine(Line($"Data comenzii: {Format(order.OrderDate)}"));
-        body.AppendLine(Line($"Data livrării: {Format(order.DeliveryDate)}"));
+        body.AppendLine(Line($"Data livrarii: {Format(order.DeliveryDate)}"));
         body.AppendLine();
         body.AppendLine("Produse:");
 
@@ -26,7 +26,7 @@ internal static class OrderConfirmationEmail
         {
             var item = order.Items[index];
             body.AppendLine(Line(
-                $"  {index + 1}. {item.ProductName} / Preț: {Money.Format(item.UnitPrice)} / Cantitate: {item.Quantity} / Total: {Money.Format(item.Total)}"));
+                $"  {index + 1}. {item.ProductName} / Pret: {Money.Format(item.UnitPrice)} / Cantitate: {item.Quantity} / Total: {Money.Format(item.Total)}"));
         }
 
         body.AppendLine();
@@ -38,13 +38,13 @@ internal static class OrderConfirmationEmail
             body.AppendLine(Line($"Reducere{coupon}: -{Money.Format(order.DiscountAmount)}"));
         }
 
-        body.AppendLine(Line($"Total comandă: {Money.Format(order.TotalCost)}"));
+        body.AppendLine(Line($"Total comanda: {Money.Format(order.TotalCost)}"));
         body.AppendLine();
-        body.AppendLine(Line($"Adresă de livrare: {order.Profile.Address}"));
+        body.AppendLine(Line($"Adresa de livrare: {order.Profile.Address}"));
         body.AppendLine(Line($"Telefon: {order.Profile.Phone}"));
-        body.AppendLine(Line($"Metodă de plată: {DescribePayment(order.PaymentMethod, maskedCard)}"));
+        body.AppendLine(Line($"Metoda de plata: {DescribePayment(order.PaymentMethod, maskedCard)}"));
 
-        return ($"MetroREX – confirmare comandă {order.ShortId}", body.ToString());
+        return ($"MetroREX – confirmare comanda {order.ShortId}", body.ToString());
     }
 
     private static string DescribePayment(PaymentMethod method, string? maskedCard) => method switch

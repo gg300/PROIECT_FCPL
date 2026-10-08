@@ -30,7 +30,7 @@ internal sealed class CartService
     {
         if (quantity < 1)
         {
-            return Result.Failure("Cantitatea trebuie să fie cel puțin 1.");
+            return Result.Failure("Cantitatea trebuie sa fie cel putin 1.");
         }
 
         var product = FindProduct(productId);
@@ -43,8 +43,8 @@ internal sealed class CartService
         if (quantity > available)
         {
             return Result.Failure(available == 0
-                ? "Nu mai există stoc disponibil pentru acest produs."
-                : $"Sunt disponibile doar {available} bucăți.");
+                ? "Nu mai exista stoc disponibil pentru acest produs."
+                : $"Sunt disponibile doar {available} bucati.");
         }
 
         Current.Add(product, quantity);
@@ -58,12 +58,12 @@ internal sealed class CartService
 
         if (item is null)
         {
-            return Result.Failure("Produsul nu se află în coș.");
+            return Result.Failure("Produsul nu se afla in cos.");
         }
 
         if (quantity < 1)
         {
-            return Result.Failure("Cantitatea trebuie să fie cel puțin 1.");
+            return Result.Failure("Cantitatea trebuie sa fie cel putin 1.");
         }
 
         var product = FindProduct(productId);
@@ -74,7 +74,7 @@ internal sealed class CartService
 
         if (quantity > product.Quantity)
         {
-            return Result.Failure($"Sunt disponibile doar {product.Quantity} bucăți.");
+            return Result.Failure($"Sunt disponibile doar {product.Quantity} bucati.");
         }
 
         item.Quantity = quantity;

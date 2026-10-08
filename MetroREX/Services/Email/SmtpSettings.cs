@@ -43,7 +43,7 @@ internal sealed class SmtpSettings
         }
         catch (JsonException exception)
         {
-            throw new InvalidDataException($"Fișierul '{path}' nu conține setări de e-mail valide.", exception);
+            throw new InvalidDataException($"Fisierul '{path}' nu contine setari de e-mail valide.", exception);
         }
     }
 }

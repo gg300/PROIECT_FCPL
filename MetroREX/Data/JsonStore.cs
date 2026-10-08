@@ -37,7 +37,7 @@ internal sealed class JsonStore<T> : IStore<T>
             }
             catch (JsonException exception)
             {
-                throw new InvalidDataException($"Fișierul '{_path}' nu conține date valide.", exception);
+                throw new InvalidDataException($"Fisierul '{_path}' nu contine date valide.", exception);
             }
         }
     }

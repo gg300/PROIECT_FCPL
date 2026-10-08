@@ -1,14 +1,14 @@
 namespace MetroREX.Controls;
 
-/// <summary>Partea din stânga: logo, titlu pe două rânduri, text scurt.</summary>
+/// <summary>Partea din stanga: logo, titlu pe doua randuri, text scurt.</summary>
 internal class HeroPanel : Panel
 {
     private readonly LogoBox _logo = new();
-    private readonly Label _line1 = MakeHeadline("Haine pentru oraș.");
+    private readonly Label _line1 = MakeHeadline("Haine pentru oras.");
     private readonly Label _line2 = MakeHeadline("Testate de un T-Rex.");
     private readonly Label _lead = new()
     {
-        Text = "Alege cum vrei să intri în magazin.",
+        Text = "Alege cum vrei sa intri in magazin.",
         AutoSize = true,
         Font = Theme.Lead,
         ForeColor = Theme.Muted,
@@ -29,7 +29,7 @@ internal class HeroPanel : Panel
         ForeColor = Theme.Ink,
     };
 
-    // Logo-ul se micșorează pe ferestre mici, iar totul rămâne centrat pe verticală
+    // Logo-ul se micsoreaza pe ferestre mici, iar totul ramane centrat pe verticala
     protected override void OnLayout(LayoutEventArgs e)
     {
         base.OnLayout(e);
@@ -53,7 +53,7 @@ internal class HeroPanel : Panel
     }
 }
 
-/// <summary>Panou cu o linie groasă sus sau jos (pentru header și footer).</summary>
+/// <summary>Panou cu o linie groasa sus sau jos (pentru header si footer).</summary>
 internal class LinePanel : Panel
 {
     public bool LineOnTop { get; set; }

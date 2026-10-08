@@ -3,7 +3,7 @@ using MetroREX.Services;
  
 namespace MetroREX.Forms;
  
-/// <summary>Fereastra principală: Login / Creare cont / Fără cont.</summary>
+/// <summary>Fereastra principala: Login / Creare cont / Fara cont.</summary>
 internal sealed class MainForm : Form
 {
     private readonly ShopServices _services;
@@ -24,7 +24,7 @@ internal sealed class MainForm : Form
         Controls.Add(body);
         Controls.Add(BuildHeader());
         Controls.Add(BuildFooter());
-        body.BringToFront(); // corpul ocupă spațiul rămas între header și footer
+        body.BringToFront(); // corpul ocupa spatiul ramas intre header si footer
     }
  
     // ===== Header: numele magazinului =====
@@ -57,7 +57,7 @@ internal sealed class MainForm : Form
         return header;
     }
  
-    // ===== Corpul: logo + titlu în stânga, meniul în dreapta =====
+    // ===== Corpul: logo + titlu in stanga, meniul in dreapta =====
     private Control BuildBody()
     {
         int pad = LogicalToDeviceUnits(48);
@@ -86,17 +86,17 @@ internal sealed class MainForm : Form
         };
  
         var login = menu.AddStation("Autentificare",
-            "Ai deja cont? Intră ca să vezi comenzile și lista de dorințe.");
-        var register = menu.AddStation("Creează cont",
-            "Primești istoric de comenzi, comenzi active și wish list.");
-        var guest = menu.AddStation("Intră fără cont",
-            "Răsfoiești și cumperi produse, fără wish list și istoric.", isGuest: true);
+            "Ai deja cont? Intra ca sa vezi comenzile si lista de dorinte.");
+        var register = menu.AddStation("Creeaza cont",
+            "Primesti istoric de comenzi, comenzi active si wish list.");
+        var guest = menu.AddStation("Intra fara cont",
+            "Rasfoiesti si cumperi produse, fara wish list si istoric.", isGuest: true);
  
-        // TODO: înlocuiește cu ferestrele reale când le facem (LoginForm, RegisterForm)
+        // TODO: inlocuieste cu ferestrele reale cand le facem (LoginForm, RegisterForm)
         login.Click    += (_, _) => ComingSoon("Autentificare");
-        register.Click += (_, _) => ComingSoon("Creează cont");
+        register.Click += (_, _) => ComingSoon("Creeaza cont");
  
-        // Deschidem ShopForm și ascundem fereastra principală temporar
+        // Deschidem ShopForm si ascundem fereastra principala temporar
         guest.Click += (_, _) =>
         {
             var shopForm = new ShopForm(_services);
@@ -123,7 +123,7 @@ internal sealed class MainForm : Form
         };
         footer.Controls.Add(new Label
         {
-            Text = "© 2026 MetroREX, un proiect de Timotei și George",
+            Text = "© 2026 MetroREX, un proiect de Timotei si George",
             Dock = DockStyle.Fill,
             TextAlign = ContentAlignment.MiddleLeft,
             ForeColor = Theme.Muted,
@@ -132,6 +132,6 @@ internal sealed class MainForm : Form
     }
  
     private void ComingSoon(string screen) =>
-        MessageBox.Show(this, $"Ecranul „{screen}” urmează să fie construit.", "MetroREX",
+        MessageBox.Show(this, $"Ecranul „{screen}” urmeaza sa fie construit.", "MetroREX",
             MessageBoxButtons.OK, MessageBoxIcon.Information);
 }

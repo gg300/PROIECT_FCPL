@@ -33,5 +33,5 @@ internal sealed class Result<T> : Result
 
     public T Value => IsSuccess
         ? _value!
-        : throw new InvalidOperationException("Rezultatul este un eșec și nu conține o valoare.");
+        : throw new InvalidOperationException("Rezultatul este un esec si nu contine o valoare.");
 }

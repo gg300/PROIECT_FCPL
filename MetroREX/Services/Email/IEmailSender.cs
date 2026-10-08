@@ -9,5 +9,5 @@ internal sealed class UnconfiguredEmailSender : IEmailSender
 {
     public Task SendAsync(string recipient, string subject, string body, CancellationToken cancellationToken = default) =>
         Task.FromException(new InvalidOperationException(
-            "Trimiterea e-mailurilor nu este configurată (lipsește fișierul Storage/email.json)."));
+            "Trimiterea e-mailurilor nu este configurata (lipseste fisierul Storage/email.json)."));
 }

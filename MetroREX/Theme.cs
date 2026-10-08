@@ -3,18 +3,18 @@ using System.Drawing.Text;
 
 namespace MetroREX;
 
-/// <summary>Culorile și fonturile aplicației. Schimbi aici, se schimbă peste tot.</summary>
+/// <summary>Culorile si fonturile aplicatiei. Schimbi aici, se schimba peste tot.</summary>
 internal static class Theme
 {
-    // Aceleași culori ca în varianta web
+    // Aceleasi culori ca in varianta web
     public static readonly Color Concrete = ColorTranslator.FromHtml("#E9ECEF"); // fundal
     public static readonly Color Paper    = Color.White;                         // carduri
     public static readonly Color Ink      = ColorTranslator.FromHtml("#16202C"); // text, contururi
     public static readonly Color Muted    = ColorTranslator.FromHtml("#5A6573"); // text secundar
     public static readonly Color Rex      = ColorTranslator.FromHtml("#2F8F5B"); // linia verde
-    public static readonly Color Signal   = ColorTranslator.FromHtml("#F2B705"); // focus tastatură
+    public static readonly Color Signal   = ColorTranslator.FromHtml("#F2B705"); // focus tastatura
 
-    // Overpass dacă e instalat, altfel Segoe UI (vine cu Windows)
+    // Overpass daca e instalat, altfel Segoe UI (vine cu Windows)
     public static readonly string FontName = PickFont();
 
     public static readonly Font Body       = new(FontName, 10f);
@@ -30,7 +30,7 @@ internal static class Theme
         return installed.Families.Any(f => f.Name == "Overpass") ? "Overpass" : "Segoe UI";
     }
 
-    /// <summary>Dreptunghi cu colțuri rotunjite.</summary>
+    /// <summary>Dreptunghi cu colturi rotunjite.</summary>
     public static GraphicsPath RoundedRect(RectangleF r, float radius)
     {
         float d = radius * 2;

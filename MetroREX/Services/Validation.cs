@@ -19,25 +19,25 @@ internal static class Validation
     public static string? Username(string? value) =>
         value is not null && UsernamePattern.IsMatch(value.Trim())
             ? null
-            : "Numele de utilizator trebuie să aibă 3–20 de caractere (litere, cifre, „.”, „_” sau „-”).";
+            : "Numele de utilizator trebuie sa aiba 3–20 de caractere (litere, cifre, „.”, „_” sau „-”).";
 
     public static string? Password(string? value)
     {
         if (string.IsNullOrEmpty(value) || value.Length < MinPasswordLength)
         {
-            return $"Parola trebuie să aibă cel puțin {MinPasswordLength} caractere.";
+            return $"Parola trebuie sa aiba cel putin {MinPasswordLength} caractere.";
         }
 
         return value.Any(char.IsLetter) && value.Any(char.IsDigit)
             ? null
-            : "Parola trebuie să conțină cel puțin o literă și o cifră.";
+            : "Parola trebuie sa contina cel putin o litera si o cifra.";
     }
 
     public static string? Profile(UserProfile? profile)
     {
         if (profile is null)
         {
-            return "Profilul lipsește.";
+            return "Profilul lipseste.";
         }
 
         return Name(profile.Name) ?? Address(profile.Address) ?? Email(profile.Email) ?? Phone(profile.Phone);
@@ -46,13 +46,13 @@ internal static class Validation
     public static string? Name(string? value)
     {
         var length = value?.Trim().Length ?? 0;
-        return length is >= 2 and <= 100 ? null : "Numele trebuie să aibă între 2 și 100 de caractere.";
+        return length is >= 2 and <= 100 ? null : "Numele trebuie sa aiba intre 2 si 100 de caractere.";
     }
 
     public static string? Address(string? value)
     {
         var length = value?.Trim().Length ?? 0;
-        return length is >= 5 and <= 200 ? null : "Adresa trebuie să aibă între 5 și 200 de caractere.";
+        return length is >= 5 and <= 200 ? null : "Adresa trebuie sa aiba intre 5 si 200 de caractere.";
     }
 
     public static string? Email(string? value)
@@ -64,13 +64,13 @@ internal static class Validation
             && string.Equals(address.Address, trimmed, StringComparison.Ordinal)
             && address.Host.Contains('.');
 
-        return isValid ? null : "Adresa de e-mail nu este validă.";
+        return isValid ? null : "Adresa de e-mail nu este valida.";
     }
 
     public static string? Phone(string? value)
     {
         var normalized = NormalizePhone(value);
-        return PhonePattern.IsMatch(normalized) ? null : "Numărul de telefon nu este valid (7–15 cifre).";
+        return PhonePattern.IsMatch(normalized) ? null : "Numarul de telefon nu este valid (7–15 cifre).";
     }
 
     public static string NormalizePhone(string? value) =>
@@ -109,12 +109,12 @@ internal static class Validation
         var number = string.Concat(card.Number.Trim().Split(CardSeparators));
         if (number.Length is < 13 or > 19 || !number.All(char.IsAsciiDigit) || !PassesLuhn(number))
         {
-            return "Numărul cardului nu este valid.";
+            return "Numarul cardului nu este valid.";
         }
 
         if (!IsExpiryValid(card.ExpiryMonth, card.ExpiryYear, today))
         {
-            return "Cardul este expirat sau data de expirare nu este validă.";
+            return "Cardul este expirat sau data de expirare nu este valida.";
         }
 
         return card.Cvv.Length is 3 or 4 && card.Cvv.All(char.IsAsciiDigit) ? null : "Codul CVV nu este valid.";

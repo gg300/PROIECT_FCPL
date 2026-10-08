@@ -44,7 +44,7 @@ internal sealed class ExcelProductStore : IStore<Product>
         {
             if (!File.Exists(_path))
             {
-                throw new FileNotFoundException("Fișierul cu produse nu a fost găsit.", _path);
+                throw new FileNotFoundException("Fisierul cu produse nu a fost gasit.", _path);
             }
 
             using var stream = File.Open(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -52,7 +52,7 @@ internal sealed class ExcelProductStore : IStore<Product>
 
             if (!workbook.TryGetWorksheet(ProductsSheetName, out var productsSheet))
             {
-                throw new InvalidDataException($"Foaia '{ProductsSheetName}' lipsește din '{_path}'.");
+                throw new InvalidDataException($"Foaia '{ProductsSheetName}' lipseste din '{_path}'.");
             }
 
             var products = ReadProducts(productsSheet);
@@ -205,7 +205,7 @@ internal sealed class ExcelProductStore : IStore<Product>
         var rows = sheet.RowsUsed().ToList();
         if (rows.Count == 0)
         {
-            throw new InvalidDataException($"Foaia '{sheet.Name}' este goală.");
+            throw new InvalidDataException($"Foaia '{sheet.Name}' este goala.");
         }
 
         var columns = rows[0]
@@ -246,7 +246,7 @@ internal sealed class ExcelProductStore : IStore<Product>
         public string RequiredText(string column)
         {
             var value = Text(column);
-            return value.Length > 0 ? value : throw Invalid(column, "valoare lipsă");
+            return value.Length > 0 ? value : throw Invalid(column, "valoare lipsa");
         }
 
         public decimal Decimal(string column, decimal? fallback = null)
@@ -254,12 +254,12 @@ internal sealed class ExcelProductStore : IStore<Product>
             var cell = FindCell(column);
             if (cell is null)
             {
-                return fallback ?? throw Invalid(column, "valoare lipsă");
+                return fallback ?? throw Invalid(column, "valoare lipsa");
             }
 
             if (!cell.TryGetValue(out decimal value) || value < 0)
             {
-                throw Invalid(column, "valoare numerică invalidă");
+                throw Invalid(column, "valoare numerica invalida");
             }
 
             return Math.Round(value, 2);
@@ -270,19 +270,19 @@ internal sealed class ExcelProductStore : IStore<Product>
             var cell = FindCell(column);
             if (cell is null)
             {
-                return fallback ?? throw Invalid(column, "valoare lipsă");
+                return fallback ?? throw Invalid(column, "valoare lipsa");
             }
 
             if (!cell.TryGetValue(out int value) || value < 0)
             {
-                throw Invalid(column, "număr întreg invalid");
+                throw Invalid(column, "numar intreg invalid");
             }
 
             return value;
         }
 
         public InvalidDataException Invalid(string column, string reason) =>
-            new($"Foaia '{_sheetName}', rândul {_row.RowNumber()}, coloana '{column}': {reason}.");
+            new($"Foaia '{_sheetName}', randul {_row.RowNumber()}, coloana '{column}': {reason}.");
 
         private IXLCell? FindCell(string column)
         {

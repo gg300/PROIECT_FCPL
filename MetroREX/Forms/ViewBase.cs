@@ -2,7 +2,7 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>Baza ecranelor magazinului. Un ecran este un UserControl afișat în <see cref="ShopForm"/>.</summary>
+/// <summary>Baza ecranelor magazinului. Un ecran este un UserControl afisat in <see cref="ShopForm"/>.</summary>
 internal abstract class ViewBase : UserControl
 {
     protected ViewBase(ShopForm shell)

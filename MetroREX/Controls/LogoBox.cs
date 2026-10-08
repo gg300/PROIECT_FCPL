@@ -3,8 +3,8 @@ using System.Drawing.Drawing2D;
 namespace MetroREX.Controls;
 
 /// <summary>
-/// Afișează assets/logo.png. Dacă fișierul lipsește,
-/// desenează un chenar punctat cu instrucțiunea.
+/// Afiseaza assets/logo.png. Daca fisierul lipseste,
+/// deseneaza un chenar punctat cu instructiunea.
 /// </summary>
 internal class LogoBox : Control
 {
@@ -23,7 +23,7 @@ internal class LogoBox : Control
 
         if (File.Exists(LogoPath))
         {
-            // Copiem imaginea în memorie, ca fișierul să nu rămână blocat cât rulează aplicația
+            // Copiem imaginea in memorie, ca fisierul sa nu ramana blocat cat ruleaza aplicatia
             using var stream = File.OpenRead(LogoPath);
             using var temp = Image.FromStream(stream);
             _image = new Bitmap(temp);
@@ -37,7 +37,7 @@ internal class LogoBox : Control
 
         if (_image is not null)
         {
-            // Încadrare proporțională (ca object-fit: contain din CSS)
+            // Incadrare proportionala (ca object-fit: contain din CSS)
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             float scale = Math.Min((float)Width / _image.Width, (float)Height / _image.Height);
             float w = _image.Width * scale;
@@ -52,7 +52,7 @@ internal class LogoBox : Control
         using var pen = new Pen(Theme.Muted, 3) { DashStyle = DashStyle.Dash };
         g.DrawPath(pen, path);
 
-        TextRenderer.DrawText(g, "Pune logo-ul în\nassets/logo.png", Theme.Body,
+        TextRenderer.DrawText(g, "Pune logo-ul in\nassets/logo.png", Theme.Body,
             Rectangle.Round(rect), Theme.Muted,
             TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
     }

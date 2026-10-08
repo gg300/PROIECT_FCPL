@@ -4,14 +4,14 @@ namespace MetroREX.Controls;
 
 /// <summary>
 /// Meniul principal desenat ca o linie de metrou:
-/// o linie verde verticală, cu câte un cerc în dreptul fiecărui buton.
+/// o linie verde verticala, cu cate un cerc in dreptul fiecarui buton.
 /// </summary>
 internal class StationLine : Panel
 {
     private readonly List<StationButton> _stations = new();
 
     private int LineX         => LogicalToDeviceUnits(26);  // centrul liniei verzi
-    private int Indent        => LogicalToDeviceUnits(64);  // unde încep cardurile
+    private int Indent        => LogicalToDeviceUnits(64);  // unde incep cardurile
     private int StationHeight => LogicalToDeviceUnits(110);
     private int Gap           => LogicalToDeviceUnits(12);
 
@@ -32,7 +32,7 @@ internal class StationLine : Panel
         return station;
     }
 
-    // Așază butoanele unul sub altul, centrate pe verticală
+    // Asaza butoanele unul sub altul, centrate pe verticala
     protected override void OnLayout(LayoutEventArgs e)
     {
         base.OnLayout(e);
@@ -51,7 +51,7 @@ internal class StationLine : Panel
 
     private int CenterY(StationButton s) => s.Top + s.CardCenterY;
 
-    // Desenează linia verde și cercurile stațiilor
+    // Deseneaza linia verde si cercurile statiilor
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);

@@ -1,13 +1,13 @@
 namespace MetroREX.Forms;
  
-/// <summary>Ecranul de start al magazinului: categoriile, ca butoane mari cu numărul de produse.</summary>
+/// <summary>Ecranul de start al magazinului: categoriile, ca butoane mari cu numarul de produse.</summary>
 internal sealed class CategoriesView : ViewBase
 {
     public CategoriesView(ShopForm shell) : base(shell)
     {
         var column = Ui.Column(this);
         Ui.AddRow(column, Ui.Title(this, "Categorii"));
-        Ui.AddRow(column, Ui.Muted(this, "Alege o categorie ca să vezi produsele."));
+        Ui.AddRow(column, Ui.Muted(this, "Alege o categorie ca sa vezi produsele."));
  
         var cards = new FlowLayoutPanel
         {
@@ -22,7 +22,7 @@ internal sealed class CategoriesView : ViewBase
         var categories = Services.Catalog.GetCategories();
         if (categories.Count == 0)
         {
-            cards.Controls.Add(Ui.Muted(this, "Momentan nu există produse în magazin."));
+            cards.Controls.Add(Ui.Muted(this, "Momentan nu exista produse in magazin."));
         }
  
         foreach (var category in categories)

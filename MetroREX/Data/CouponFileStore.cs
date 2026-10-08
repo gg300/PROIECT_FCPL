@@ -76,7 +76,7 @@ internal sealed class CouponFileStore : IStore<Coupon>
 
         if (!isValid)
         {
-            throw new InvalidDataException($"Fișierul '{_path}', linia {lineNumber}: cupon invalid.");
+            throw new InvalidDataException($"Fisierul '{_path}', linia {lineNumber}: cupon invalid.");
         }
 
         return new Coupon

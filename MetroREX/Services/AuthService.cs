@@ -70,7 +70,7 @@ internal sealed class AuthService
 
         if (!PasswordHasher.Verify(currentPassword ?? string.Empty, user.PasswordHash, user.PasswordSalt))
         {
-            return Result.Failure("Parola curentă este incorectă.");
+            return Result.Failure("Parola curenta este incorecta.");
         }
 
         var error = Validation.Password(newPassword);
@@ -81,7 +81,7 @@ internal sealed class AuthService
 
         if (newPassword == currentPassword)
         {
-            return Result.Failure("Parola nouă trebuie să fie diferită de cea curentă.");
+            return Result.Failure("Parola noua trebuie sa fie diferita de cea curenta.");
         }
 
         (user.PasswordHash, user.PasswordSalt) = PasswordHasher.Hash(newPassword);
@@ -116,7 +116,7 @@ internal sealed class AuthService
 
         if (!PasswordHasher.Verify(password ?? string.Empty, user.PasswordHash, user.PasswordSalt))
         {
-            return Result.Failure("Parola este incorectă.");
+            return Result.Failure("Parola este incorecta.");
         }
 
         _repository.Users.Remove(user);

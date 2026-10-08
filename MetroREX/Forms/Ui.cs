@@ -2,7 +2,7 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>Mici ajutoare ca toate ecranele să arate la fel (culorile vin din <see cref="Theme"/>).</summary>
+/// <summary>Mici ajutoare ca toate ecranele sa arate la fel (culorile vin din <see cref="Theme"/>).</summary>
 internal static class Ui
 {
     public static readonly Color Danger = ColorTranslator.FromHtml("#B3261E");
@@ -37,7 +37,7 @@ internal static class Ui
         Margin = new Padding(0, 0, 0, host.LogicalToDeviceUnits(12)),
     };
 
-    /// <summary>Eticheta în care afișăm rezultatul ultimei acțiuni (succes / eroare).</summary>
+    /// <summary>Eticheta in care afisam rezultatul ultimei actiuni (succes / eroare).</summary>
     public static Label Message(Control host) => new()
     {
         AutoSize = true,
@@ -59,8 +59,8 @@ internal static class Ui
     }
 
     public static string RatingText(Product product) => product.RatingCount == 0
-        ? "Fără evaluări"
-        : $"{product.Rating:0.0} / 5 (evaluări: {product.RatingCount})";
+        ? "Fara evaluari"
+        : $"{product.Rating:0.0} / 5 (evaluari: {product.RatingCount})";
 
     public static string ProductCount(int count) => count == 1
         ? "1 produs"
@@ -156,7 +156,7 @@ internal static class Ui
 
     // ===== Aranjare =====
 
-    /// <summary>O coloană verticală cu margini; rândurile se adaugă cu <see cref="AddRow"/>.</summary>
+    /// <summary>O coloana verticala cu margini; randurile se adauga cu <see cref="AddRow"/>.</summary>
     public static TableLayoutPanel Column(Control host)
     {
         var pad = host.LogicalToDeviceUnits(32);
@@ -171,14 +171,14 @@ internal static class Ui
         return table;
     }
 
-    /// <summary>Adaugă un rând; maximum un rând <paramref name="fill"/> pe tabel (ocupă spațiul rămas).</summary>
+    /// <summary>Adauga un rand; maximum un rand <paramref name="fill"/> pe tabel (ocupa spatiul ramas).</summary>
     public static void AddRow(TableLayoutPanel table, Control control, bool fill = false)
     {
         table.RowStyles.Add(fill ? new RowStyle(SizeType.Percent, 100) : new RowStyle(SizeType.AutoSize));
         table.Controls.Add(control, 0, table.RowStyles.Count - 1);
     }
 
-    /// <summary>Un rând orizontal de butoane / controale.</summary>
+    /// <summary>Un rand orizontal de butoane / controale.</summary>
     public static FlowLayoutPanel Bar(Control host) => new()
     {
         AutoSize = true,
@@ -189,7 +189,7 @@ internal static class Ui
         Margin = new Padding(0, host.LogicalToDeviceUnits(8), 0, 0),
     };
 
-    /// <summary>Tabel „etichetă: câmp”, cu rânduri adăugate prin <see cref="AddField{T}"/>.</summary>
+    /// <summary>Tabel „eticheta: camp”, cu randuri adaugate prin <see cref="AddField{T}"/>.</summary>
     public static TableLayoutPanel Fields(Control host)
     {
         var table = new TableLayoutPanel
