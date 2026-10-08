@@ -1,5 +1,7 @@
-STRUCTURE:
-MetroREX/                          
+#  MetroREX Project Structure
+
+```text
+MetroREX/
 │
 ├── MetroREX.csproj
 ├── Program.cs
@@ -8,15 +10,15 @@ MetroREX/
 ├── assets/
 │   └── logo.png
 │
-├── Controls/                      <- controale desenate manual 
-│   ├── HeroPanel.cs               (conține și LinePanel)
+├── Controls/                      # Controale desenate manual 
+│   ├── HeroPanel.cs               # (conține și LinePanel)
 │   ├── LogoBox.cs
 │   ├── StationButton.cs
 │   └── StationLine.cs
 │
-├── Forms/                         <- ferestrele aplicației
+├── Forms/                         # Ferestrele aplicației
 │   ├── MainForm.cs                
-│   ├── LoginForm.cs               (pasul 4)
+│   ├── LoginForm.cs               # PASUL 4
 │   ├── RegisterForm.cs
 │   ├── HomeForm.cs
 │   ├── CategoriesForm.cs
@@ -29,7 +31,7 @@ MetroREX/
 │   ├── CouponsForm.cs
 │   └── SettingsForm.cs
 │
-├── Models/                        <- PASUL 1 (acesta) 
+├── Models/                        # PASUL 1: Modele de date
 │   ├── User.cs
 │   ├── UserProfile.cs
 │   ├── Product.cs                 
@@ -41,20 +43,20 @@ MetroREX/
 │   ├── Coupon.cs
 │   └── Notification.cs
 │
-├── Data/                          <- pasul 2: citire/scriere JSON și Excel
+├── Data/                          # PASUL 2: Citire/scriere fișiere
 │   ├── JsonStore.cs
 │   └── ExcelProductStore.cs
 │
-├── Services/                      <- pasul 3: logica magazinului
+├── Services/                      # PASUL 3: Logica magazinului
 │   ├── Clock.cs                   
 │   ├── AuthService.cs
 │   ├── ShopService.cs
 │   ├── NotificationService.cs
 │   ├── CouponService.cs
 │   ├── EmailService.cs
-│   └── Session.cs                 (utilizatorul curent + coșul)
+│   └── Session.cs                 # (utilizatorul curent + coșul)
 │
-└── data/                          
+└── data/                          # Baza de date locală
     ├── products.xlsx
     ├── users.json
     └── coupons.txt
