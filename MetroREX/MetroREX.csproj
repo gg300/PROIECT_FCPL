@@ -11,9 +11,14 @@
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
 
-  <!-- Copiază folderul assets (cu logo.png) lângă .exe la fiecare build -->
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Update="assets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Storage\products.xlsx" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Storage\email.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

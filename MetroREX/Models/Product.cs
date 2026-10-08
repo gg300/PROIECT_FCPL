@@ -31,6 +31,32 @@ public class Product
     [JsonIgnore]
     public bool InStock => Quantity > 0;
 
+    public Product Clone()
+    {
+        var copy = new Product();
+        copy.CopyFrom(this);
+        return copy;
+    }
+
+    public void CopyFrom(Product other)
+    {
+        ArgumentNullException.ThrowIfNull(other);
+
+        Id = other.Id;
+        Name = other.Name;
+        Category = other.Category;
+        BasePrice = other.BasePrice;
+        CurrentPrice = other.CurrentPrice;
+        Quantity = other.Quantity;
+        QuantityYesterday = other.QuantityYesterday;
+        Description = other.Description;
+        Seller = other.Seller;
+        Colors = new List<string>(other.Colors);
+        Specs = other.Specs.Select(spec => new ProductSpec { Name = spec.Name, Value = spec.Value }).ToList();
+        RatingSum = other.RatingSum;
+        RatingCount = other.RatingCount;
+    }
+
     public void AddRating(int stars)
     {
         if (stars is < 1 or > 5) throw new ArgumentOutOfRangeException(nameof(stars), "Rating între 1 și 5.");

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace MetroREX.Models;
 
 public class OrderItem
@@ -9,12 +11,17 @@ public class OrderItem
 
     public int? Rating { get; set; }
 
+    [JsonIgnore]
     public decimal Total => UnitPrice * Quantity;
 }
 
 public class Order
 {
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
+
+    [JsonIgnore]
+    public string ShortId => Id.Length <= 8 ? Id.ToUpperInvariant() : Id[..8].ToUpperInvariant();
+
     public DateTime OrderDate { get; set; }
     public DateTime DeliveryDate { get; set; }
     public OrderStatus Status { get; set; } = OrderStatus.Active;
@@ -27,7 +34,9 @@ public class Order
     public string? CouponCode { get; set; }
     public decimal DiscountAmount { get; set; }
 
+    [JsonIgnore]
     public decimal Subtotal => Items.Sum(i => i.Total);
+    [JsonIgnore]
     public decimal TotalCost => Subtotal - DiscountAmount;
 
     public bool IsDelivered(DateTime now) => now.Date >= DeliveryDate.Date;

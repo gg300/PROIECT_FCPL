@@ -1,12 +1,16 @@
 using MetroREX.Controls;
-
+using MetroREX.Services;
+ 
 namespace MetroREX.Forms;
-
+ 
 /// <summary>Fereastra principală: Login / Creare cont / Fără cont.</summary>
-public class MainForm : Form
+internal sealed class MainForm : Form
 {
-    public MainForm()
+    private readonly ShopServices _services;
+ 
+    public MainForm(ShopServices services)
     {
+        _services = services ?? throw new ArgumentNullException(nameof(services));
         Text = "MetroREX";
         BackColor = Theme.Concrete;
         ForeColor = Theme.Ink;
@@ -15,14 +19,14 @@ public class MainForm : Form
         ClientSize = LogicalToDeviceUnits(new Size(1200, 720));
         MinimumSize = LogicalToDeviceUnits(new Size(1000, 640));
         DoubleBuffered = true;
-
+ 
         var body = BuildBody();
         Controls.Add(body);
         Controls.Add(BuildHeader());
         Controls.Add(BuildFooter());
         body.BringToFront(); // corpul ocupă spațiul rămas între header și footer
     }
-
+ 
     // ===== Header: numele magazinului =====
     private Control BuildHeader()
     {
@@ -32,7 +36,7 @@ public class MainForm : Form
             Height = LogicalToDeviceUnits(64),
             Padding = new Padding(LogicalToDeviceUnits(48), 0, LogicalToDeviceUnits(48), LogicalToDeviceUnits(2)),
         };
-
+ 
         header.Controls.Add(new Label
         {
             Text = "Magazin online de haine",
@@ -52,7 +56,7 @@ public class MainForm : Form
         });
         return header;
     }
-
+ 
     // ===== Corpul: logo + titlu în stânga, meniul în dreapta =====
     private Control BuildBody()
     {
@@ -68,36 +72,45 @@ public class MainForm : Form
         table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         table.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-
+ 
         var hero = new HeroPanel
         {
             Dock = DockStyle.Fill,
             Margin = new Padding(0, 0, pad / 2, 0),
         };
-
+ 
         var menu = new StationLine
         {
             Dock = DockStyle.Fill,
             Margin = new Padding(pad / 2, 0, 0, 0),
         };
-
+ 
         var login = menu.AddStation("Autentificare",
             "Ai deja cont? Intră ca să vezi comenzile și lista de dorințe.");
         var register = menu.AddStation("Creează cont",
             "Primești istoric de comenzi, comenzi active și wish list.");
         var guest = menu.AddStation("Intră fără cont",
             "Răsfoiești și cumperi produse, fără wish list și istoric.", isGuest: true);
-
-        // TODO: înlocuiește cu ferestrele reale când le facem (LoginForm, RegisterForm, ShopForm)
+ 
+        // TODO: înlocuiește cu ferestrele reale când le facem (LoginForm, RegisterForm)
         login.Click    += (_, _) => ComingSoon("Autentificare");
         register.Click += (_, _) => ComingSoon("Creează cont");
-        guest.Click    += (_, _) => ComingSoon("Intră fără cont");
-
+ 
+        // Deschidem ShopForm și ascundem fereastra principală temporar
+        guest.Click += (_, _) =>
+        {
+            var shopForm = new ShopForm(_services);
+            this.Hide();
+ 
+            shopForm.FormClosed += (s, args) => this.Show();
+            shopForm.Show();
+        };
+ 
         table.Controls.Add(hero, 0, 0);
         table.Controls.Add(menu, 1, 0);
         return table;
     }
-
+ 
     // ===== Footer =====
     private Control BuildFooter()
     {
@@ -117,7 +130,7 @@ public class MainForm : Form
         });
         return footer;
     }
-
+ 
     private void ComingSoon(string screen) =>
         MessageBox.Show(this, $"Ecranul „{screen}” urmează să fie construit.", "MetroREX",
             MessageBoxButtons.OK, MessageBoxIcon.Information);
