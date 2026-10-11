@@ -243,6 +243,12 @@ internal sealed class CategoryTile : Control
 
     // ===== Stare =====
 
+    protected override void OnClick(EventArgs e)
+    {
+        Sfx.Play(Sound.Tick);
+        base.OnClick(e);
+    }
+
     protected override void OnMouseEnter(EventArgs e) { base.OnMouseEnter(e); _hover = true; Animate(); }
     protected override void OnMouseLeave(EventArgs e) { base.OnMouseLeave(e); _hover = false; _down = false; Animate(); }
     protected override void OnMouseDown(MouseEventArgs e) { base.OnMouseDown(e); _down = true; Focus(); Invalidate(); }

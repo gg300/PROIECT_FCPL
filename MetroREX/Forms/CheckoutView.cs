@@ -230,6 +230,7 @@ internal sealed class CheckoutView : ViewBase
             return;
         }
 
+        Sfx.Play(Sound.OrderPlaced);
         MessageBox.Show(FindForm(), Describe(outcome), "Comanda plasata", MessageBoxButtons.OK, MessageBoxIcon.Information);
         Shell.GoHome();
     }

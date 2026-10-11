@@ -90,7 +90,11 @@ internal sealed class MainForm : Form
 
         login.Click += (_, _) => Authenticate(() => new LoginForm(_services));
         register.Click += (_, _) => Authenticate(() => new RegisterForm(_services));
-        guest.Click += (_, _) => OpenShop();
+        guest.Click += (_, _) =>
+        {
+            Sfx.Play(Sound.Tick);
+            OpenShop();
+        };
 
         return new ResponsiveBody(hero, access) { Dock = DockStyle.Fill };
     }
@@ -200,6 +204,7 @@ internal sealed class MainForm : Form
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
+            Sfx.Play(Sound.Welcome);
             OpenShop();
         }
     }

@@ -345,6 +345,17 @@ internal sealed class RoundedButton : Button
         }
     }
 
+    protected override void OnClick(EventArgs e)
+    {
+        // Navigation buttons and category tiles tick softly when pressed
+        if (Kind is ButtonKind.Tile or ButtonKind.Ghost)
+        {
+            Sfx.Play(Sound.Tick);
+        }
+
+        base.OnClick(e);
+    }
+
     protected override void OnMouseEnter(EventArgs e) { base.OnMouseEnter(e); _hover = true; Invalidate(); }
     protected override void OnMouseLeave(EventArgs e) { base.OnMouseLeave(e); _hover = false; _down = false; Invalidate(); }
     protected override void OnMouseDown(MouseEventArgs e) { base.OnMouseDown(e); _down = true; Invalidate(); }

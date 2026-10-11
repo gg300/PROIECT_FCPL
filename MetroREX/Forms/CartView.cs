@@ -112,6 +112,7 @@ internal sealed class CartView : ViewBase
  
         var productId = item.ProductId;
         Services.Cart.SetQuantity(productId, newQuantity);
+        Sfx.Play(delta > 0 ? Sound.AddToCart : Sound.RemoveFromCart);
         Ui.Note(_message, string.Empty);
         Reload(productId);
     }
@@ -126,6 +127,7 @@ internal sealed class CartView : ViewBase
         }
  
         Services.Cart.Remove(item.ProductId);
+        Sfx.Play(Sound.RemoveFromCart);
         Ui.Say(_message, $"„{item.ProductName}” a fost scos din cos.");
         Reload(selectProductId: null);
     }
@@ -138,6 +140,7 @@ internal sealed class CartView : ViewBase
         }
  
         Services.Cart.Clear();
+        Sfx.Play(Sound.RemoveFromCart);
         Ui.Say(_message, "Cosul a fost golit.");
         Reload(selectProductId: null);
     }

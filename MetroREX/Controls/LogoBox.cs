@@ -22,6 +22,8 @@ internal class LogoBox : Control
                | ControlStyles.ResizeRedraw, true);
         BackColor = Color.Transparent;
         TabStop = false;
+        Cursor = Cursors.Hand;
+        Click += (_, _) => Sfx.Play(Sound.Roar); // easter egg: click the T-Rex
 
         if (File.Exists(LogoPath))
         {

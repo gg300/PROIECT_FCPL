@@ -230,8 +230,11 @@ internal sealed class ShopForm : Form
 
     private void OnSessionChanged(object? sender, EventArgs e) => UpdateAccountButtons();
 
-    private void OnDayStarted(object? sender, EventArgs e) =>
+    private void OnDayStarted(object? sender, EventArgs e)
+    {
+        Sfx.Play(Sound.StationChime);
         SetStatus("A inceput o zi noua: preturile si cupoanele au fost actualizate.", isError: false);
+    }
 
     private void SetStatus(string text, bool isError)
     {
@@ -250,6 +253,12 @@ internal sealed class ShopForm : Form
             case Keys.Control | Keys.Shift | Keys.D:
                 Services.Clock.AdvanceDays(1);
                 ReportClock();
+                return true;
+
+            case Keys.Control | Keys.M:
+                Sfx.Muted = !Sfx.Muted;
+                Sfx.Play(Sound.Tick);
+                SetStatus(Sfx.Muted ? "Sunet oprit (Ctrl+M pentru a-l porni)." : "Sunet pornit (Ctrl+M pentru a-l opri).", isError: false);
                 return true;
 
             case Keys.Control | Keys.Shift | Keys.R:

@@ -104,6 +104,7 @@ internal sealed class ProductListView : ViewBase
         }
  
         Services.Cart.Add(product.Id, 1);
+        Sfx.Play(Sound.AddToCart);
         Shell.RefreshCartCount();
         Ui.Say(_message, $"„{product.Name}” a fost adaugat in cos.");
     }

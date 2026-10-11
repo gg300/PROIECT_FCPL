@@ -52,6 +52,11 @@ internal static class Ui
     {
         label.ForeColor = isError ? Danger : Theme.Success;
         label.Text = text;
+
+        if (isError)
+        {
+            Sfx.Play(Sound.Error);
+        }
     }
 
     public static void Note(Label label, string text)
