@@ -3,12 +3,14 @@ namespace MetroREX.Forms;
 /// <summary>Campuri de text cu acelasi aspect pe toate ecranele (restul controalelor sunt in <see cref="Ui"/>).</summary>
 internal static class Inputs
 {
+    private static readonly Font InputFont = new(Theme.FontName, 10.5f);
+
     public static TextBox Text(string placeholder = "") => new()
     {
         BorderStyle = BorderStyle.FixedSingle,
         BackColor = Theme.Paper,
         ForeColor = Theme.Ink,
-        Font = Theme.Body,
+        Font = InputFont,
         PlaceholderText = placeholder,
     };
 
@@ -19,7 +21,7 @@ internal static class Inputs
         FlatStyle = FlatStyle.Flat,
         BackColor = Theme.Paper,
         ForeColor = Theme.Ink,
-        Font = Theme.Body,
+        Font = InputFont,
     };
 
     public static TextBox Password(string placeholder = "")

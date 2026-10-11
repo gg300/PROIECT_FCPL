@@ -3,8 +3,8 @@ using System.Drawing.Drawing2D;
 namespace MetroREX.Controls;
 
 /// <summary>
-/// Afiseaza assets/logo.png. Daca fisierul lipseste,
-/// deseneaza un chenar punctat cu instructiunea.
+/// Afiseaza assets/logo.png pe fundal transparent (se vede ce deseneaza parintele din spate).
+/// Daca fisierul lipseste, deseneaza un chenar punctat cu instructiunea.
 /// </summary>
 internal class LogoBox : Control
 {
@@ -18,8 +18,10 @@ internal class LogoBox : Control
         SetStyle(ControlStyles.UserPaint
                | ControlStyles.AllPaintingInWmPaint
                | ControlStyles.OptimizedDoubleBuffer
+               | ControlStyles.SupportsTransparentBackColor
                | ControlStyles.ResizeRedraw, true);
-        BackColor = Theme.Concrete;
+        BackColor = Color.Transparent;
+        TabStop = false;
 
         if (File.Exists(LogoPath))
         {
