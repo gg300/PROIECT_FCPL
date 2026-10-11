@@ -38,6 +38,11 @@ internal static class OrderConfirmationEmail
             body.AppendLine(Line($"Reducere{coupon}: -{Money.Format(order.DiscountAmount)}"));
         }
 
+        if (order.SubscriptionDiscount > 0)
+        {
+            body.AppendLine(Line($"Reducere abonament: -{Money.Format(order.SubscriptionDiscount)}"));
+        }
+
         body.AppendLine(Line($"Total comanda: {Money.Format(order.TotalCost)}"));
         body.AppendLine();
         body.AppendLine(Line($"Adresa de livrare: {order.Profile.Address}"));

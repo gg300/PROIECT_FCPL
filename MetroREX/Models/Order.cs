@@ -33,11 +33,12 @@ public class Order
 
     public string? CouponCode { get; set; }
     public decimal DiscountAmount { get; set; }
+    public decimal SubscriptionDiscount { get; set; }
 
     [JsonIgnore]
     public decimal Subtotal => Items.Sum(i => i.Total);
     [JsonIgnore]
-    public decimal TotalCost => Subtotal - DiscountAmount;
+    public decimal TotalCost => Subtotal - DiscountAmount - SubscriptionDiscount;
 
     public bool IsDelivered(DateTime now) => now.Date >= DeliveryDate.Date;
 }

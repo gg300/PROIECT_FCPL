@@ -11,6 +11,7 @@ public class User
 
     public List<string> WishList { get; set; } = new();
 
+    public List<string> Subscriptions { get; set; } = new();
     public List<Coupon> Coupons { get; set; } = new();
     public List<Order> Orders { get; set; } = new();
     public List<Notification> Notifications { get; set; } = new();

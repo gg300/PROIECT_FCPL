@@ -206,6 +206,17 @@ internal static class Ui
         return table;
     }
 
+    /// <summary>Un rand de titlu de sectiune, pe toata latimea unui tabel creat cu <see cref="Fields"/>.</summary>
+    public static void AddSection(Control host, TableLayoutPanel table, string text)
+    {
+        var label = Section(host, text);
+        var row = table.RowStyles.Count;
+
+        table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        table.Controls.Add(label, 0, row);
+        table.SetColumnSpan(label, 2);
+    }
+
     public static T AddField<T>(Control host, TableLayoutPanel table, string label, T input) where T : Control
     {
         var row = table.RowStyles.Count;

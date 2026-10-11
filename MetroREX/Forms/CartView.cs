@@ -62,10 +62,25 @@ internal sealed class CartView : ViewBase
             }
         }
  
-        _total.Text = cart.IsEmpty ? "Cosul este gol." : $"Total: {cart.Subtotal:N2} lei";
+        _total.Text = cart.IsEmpty ? "Cosul este gol." : TotalText(cart.Subtotal);
         Shell.RefreshCartCount();
     }
  
+    /// <summary>Totalul cu reducerile abonamentelor; cuponul se alege la finalizarea comenzii.</summary>
+    private string TotalText(decimal fallbackSubtotal)
+    {
+        var result = Services.Checkout.Quote();
+        if (!result.IsSuccess)
+        {
+            return $"Total: {fallbackSubtotal:N2} lei";
+        }
+
+        var quote = result.Value;
+        return quote.SubscriptionDiscount > 0
+            ? $"Subtotal: {quote.Subtotal:N2} lei   |   Reducere abonamente: -{quote.SubscriptionDiscount:N2} lei   |   Total: {quote.Total:N2} lei"
+            : $"Total: {quote.Total:N2} lei";
+    }
+
     private void ChangeQuantity(int delta)
     {
         var item = SelectedItem;
@@ -135,7 +150,6 @@ internal sealed class CartView : ViewBase
             return;
         }
  
-        // TODO: ecranul de finalizare (adresa, plata, cupon) foloseste Services.Checkout.
-        Ui.Note(_message, "Ecranul de finalizare a comenzii urmeaza sa fie construit.");
+        Shell.Navigate(() => new CheckoutView(Shell));
     }
 }

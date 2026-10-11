@@ -22,8 +22,9 @@ internal sealed class ShopServices
         Cart = new CartService(repository, Session);
         WishList = new WishListService(repository, Session);
         Coupons = new CouponService(repository, Session, clock, random);
+        Subscriptions = new SubscriptionService(repository, Session);
         Orders = new OrderService(repository, Session, clock, Notifications);
-        Checkout = new CheckoutService(repository, Session, clock, emailSender, random);
+        Checkout = new CheckoutService(repository, Session, clock, emailSender, random, Subscriptions);
 
         var pricing = new PricingService(repository, Notifications, random);
         var inventory = new InventoryService(repository, Notifications);
@@ -49,6 +50,8 @@ internal sealed class ShopServices
     public WishListService WishList { get; }
 
     public CouponService Coupons { get; }
+
+    public SubscriptionService Subscriptions { get; }
 
     public OrderService Orders { get; }
 

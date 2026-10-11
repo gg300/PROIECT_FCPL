@@ -12,6 +12,7 @@ internal sealed class ShopForm : Form
     private readonly FlowLayoutPanel _actions;
     private readonly Button _backButton;
     private readonly Button _cartButton;
+    private readonly Button _subscriptionsButton;
     private readonly Label _status;
  
     private Func<ViewBase>? _currentFactory;
@@ -35,6 +36,7 @@ internal sealed class ShopForm : Form
         _backButton = Ui.SecondaryButton(this, "← Inapoi", (_, _) => Back());
         _backButton.Visible = false;
         var categories = Ui.SecondaryButton(this, "Categorii", (_, _) => GoHome());
+        _subscriptionsButton = Ui.SecondaryButton(this, "Abonamente", (_, _) => OpenSubscriptions());
         _cartButton = Ui.PrimaryButton(this, "Cos (0)", (_, _) => OpenCart());
  
         // TODO (pasul Login): aici apar si Comenzi active, Istoric, Wish list, Cupoane, Setari, Logout,
@@ -51,6 +53,7 @@ internal sealed class ShopForm : Form
         };
         _actions.Controls.Add(_backButton);
         _actions.Controls.Add(categories);
+        _actions.Controls.Add(_subscriptionsButton);
         _actions.Controls.Add(_cartButton);
  
         var header = new LinePanel
@@ -86,6 +89,8 @@ internal sealed class ShopForm : Form
         Controls.Add(header);
         Controls.Add(_status);
         _host.BringToFront(); // zona ecranelor ocupa spatiul ramas intre antet si bara de stare
+
+        UpdateAccountButtons();
     }
  
     public ShopServices Services { get; }
@@ -142,6 +147,17 @@ internal sealed class ShopForm : Form
         }
     }
  
+    private void OpenSubscriptions()
+    {
+        if (_currentView is not SubscriptionsView)
+        {
+            Navigate(() => new SubscriptionsView(this));
+        }
+    }
+
+    /// <summary>Butoanele rezervate utilizatorilor autentificati.</summary>
+    private void UpdateAccountButtons() => _subscriptionsButton.Visible = Services.Session.IsLoggedIn;
+
     private void Display(Func<ViewBase> factory)
     {
         var view = factory();
@@ -178,6 +194,7 @@ internal sealed class ShopForm : Form
         Services.Runtime.ErrorOccurred += OnRuntimeError;
         Services.Runtime.ProductsSynchronized += OnProductsSynchronized;
         Services.Runtime.DayStarted += OnDayStarted;
+        Services.Session.Changed += OnSessionChanged;
  
         GoHome();
     }
@@ -187,6 +204,7 @@ internal sealed class ShopForm : Form
         Services.Runtime.ErrorOccurred -= OnRuntimeError;
         Services.Runtime.ProductsSynchronized -= OnProductsSynchronized;
         Services.Runtime.DayStarted -= OnDayStarted;
+        Services.Session.Changed -= OnSessionChanged;
  
         base.OnFormClosed(e);
     }
@@ -205,6 +223,8 @@ internal sealed class ShopForm : Form
         }
     }
  
+    private void OnSessionChanged(object? sender, EventArgs e) => UpdateAccountButtons();
+
     private void OnDayStarted(object? sender, EventArgs e) =>
         SetStatus("A inceput o zi noua: preturile si cupoanele au fost actualizate.", isError: false);
  

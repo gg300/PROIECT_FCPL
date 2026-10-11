@@ -32,10 +32,11 @@ internal sealed class ProductListView : ViewBase
         Ui.AddRow(column, _message);
  
         _grid = Ui.Grid(this,
-            ("Produs", 45f, false),
-            ("Pret", 15f, true),
-            ("Stoc", 12f, true),
-            ("Evaluare", 28f, false));
+            ("Produs", 34f, false),
+            ("Vanzator", 20f, false),
+            ("Pret", 14f, true),
+            ("Stoc", 10f, true),
+            ("Evaluare", 22f, false));
         _grid.CellDoubleClick += (_, e) =>
         {
             if (e.RowIndex >= 0)
@@ -73,6 +74,7 @@ internal sealed class ProductListView : ViewBase
         {
             var index = _grid.Rows.Add(
                 product.Name,
+                SellerText(product),
                 $"{product.CurrentPrice:N2} lei",
                 product.InStock ? product.Quantity.ToString() : "Epuizat",
                 Ui.RatingText(product));
@@ -82,6 +84,11 @@ internal sealed class ProductListView : ViewBase
         Ui.Note(_message, "Dublu-click pe un produs sau „Adauga in cos” pentru a-l adauga.");
     }
  
+    /// <summary>Numele vanzatorului; pentru cei la care utilizatorul este abonat se arata si reducerea.</summary>
+    private string SellerText(Product product) => Services.Subscriptions.IsSubscribed(product.Seller)
+        ? $"{product.Seller} (-{SubscriptionService.DiscountPercent}%)"
+        : product.Seller;
+
     private void AddSelectedToCart()
     {
         if (_grid.CurrentRow?.Tag is not Product product)

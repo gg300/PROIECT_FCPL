@@ -14,19 +14,22 @@ internal sealed class CheckoutService
     private readonly IClock _clock;
     private readonly IEmailSender _emailSender;
     private readonly Random _random;
+    private readonly SubscriptionService _subscriptions;
 
     public CheckoutService(
         ShopRepository repository,
         Session session,
         IClock clock,
         IEmailSender emailSender,
-        Random random)
+        Random random,
+        SubscriptionService subscriptions)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _session = session ?? throw new ArgumentNullException(nameof(session));
         _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
         _random = random ?? throw new ArgumentNullException(nameof(random));
+        _subscriptions = subscriptions ?? throw new ArgumentNullException(nameof(subscriptions));
     }
 
     public Result<OrderQuote> Quote(string? couponCode = null)
@@ -67,10 +70,11 @@ internal sealed class CheckoutService
         }
 
         var subtotal = lines.Sum(line => line.Item.Total);
+        var subscriptionDiscount = lines.Sum(line => _subscriptions.DiscountFor(line.Product, line.Item.Total));
 
         if (string.IsNullOrWhiteSpace(couponCode))
         {
-            return Result.Success(new OrderQuote(lines.Select(line => line.Item).ToList(), null, subtotal, 0m));
+            return Result.Success(new OrderQuote(lines.Select(line => line.Item).ToList(), null, subtotal, 0m, subscriptionDiscount));
         }
 
         var couponResult = ResolveCoupon(couponCode, lines.Select(line => line.Product.Category));
@@ -86,7 +90,7 @@ internal sealed class CheckoutService
 
         var discount = Math.Round(eligibleTotal * coupon.DiscountPercent / 100m, 2, MidpointRounding.AwayFromZero);
 
-        return Result.Success(new OrderQuote(lines.Select(line => line.Item).ToList(), coupon, subtotal, discount));
+        return Result.Success(new OrderQuote(lines.Select(line => line.Item).ToList(), coupon, subtotal, discount, subscriptionDiscount));
     }
 
     public async Task<Result<CheckoutOutcome>> PlaceOrderAsync(CheckoutRequest request)
@@ -177,6 +181,7 @@ internal sealed class CheckoutService
             Profile = profile,
             CouponCode = quote.Coupon?.Code,
             DiscountAmount = quote.Discount,
+            SubscriptionDiscount = quote.SubscriptionDiscount,
         };
 
         foreach (var item in order.Items)

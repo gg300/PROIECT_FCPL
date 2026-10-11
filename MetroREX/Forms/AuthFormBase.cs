@@ -108,15 +108,7 @@ internal abstract class AuthFormBase : Form
     protected void Complete() => DialogResult = DialogResult.OK;
 
     /// <summary>Un rand de titlu de sectiune, pe toata latimea tabelului de campuri.</summary>
-    protected void AddSection(string text)
-    {
-        var label = Ui.Section(this, text);
-        var row = Fields.RowStyles.Count;
-
-        Fields.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        Fields.Controls.Add(label, 0, row);
-        Fields.SetColumnSpan(label, 2);
-    }
+    protected void AddSection(string text) => Ui.AddSection(this, Fields, text);
 
     /// <summary>Adauga „Arata parola”, care dezvaluie sau ascunde toate campurile de parola date.</summary>
     protected void AddRevealToggle(params TextBox[] passwordBoxes)

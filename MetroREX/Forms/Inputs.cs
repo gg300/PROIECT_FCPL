@@ -12,6 +12,16 @@ internal static class Inputs
         PlaceholderText = placeholder,
     };
 
+    /// <summary>Lista derulanta in care se poate doar alege (fara text liber).</summary>
+    public static ComboBox Choice() => new()
+    {
+        DropDownStyle = ComboBoxStyle.DropDownList,
+        FlatStyle = FlatStyle.Flat,
+        BackColor = Theme.Paper,
+        ForeColor = Theme.Ink,
+        Font = Theme.Body,
+    };
+
     public static TextBox Password(string placeholder = "")
     {
         var box = Text(placeholder);
