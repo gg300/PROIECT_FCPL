@@ -1,0 +1,80 @@
+[
+  {
+    "Username": "demo",
+    "PasswordHash": "hmHos24LV/7h4wSW71gnKe+HVCSOjSf8LUK10d5Vs2o=",
+    "PasswordSalt": "BFG4o4c7ibp5LYHfx7NQKA==",
+    "Profile": {
+      "Name": "Cont Demo",
+      "Address": "Str. Exemplu 10, Timisoara",
+      "Email": "demo@metrorex.ro",
+      "Phone": "0712345678"
+    },
+    "WishList": [
+      "M006",
+      "M007",
+      "M012"
+    ],
+    "Subscriptions": [],
+    "Coupons": [],
+    "Orders": [
+      {
+        "Id": "27451d2d8a824c329049de8f1eb5bc84",
+        "OrderDate": "2026-10-01T12:30:00",
+        "DeliveryDate": "2026-10-04T00:00:00",
+        "Status": "Delivered",
+        "Items": [
+          {
+            "ProductId": "M001",
+            "ProductName": "Executive Jean",
+            "UnitPrice": 41.02,
+            "Quantity": 1,
+            "Rating": null
+          },
+          {
+            "ProductId": "M003",
+            "ProductName": "Lizard Pattern Silk Tie",
+            "UnitPrice": 90.22,
+            "Quantity": 2,
+            "Rating": null
+          }
+        ],
+        "PaymentMethod": "Card",
+        "Profile": {
+          "Name": "Cont Demo",
+          "Address": "Str. Exemplu 10, Timisoara",
+          "Email": "demo@metrorex.ro",
+          "Phone": "0712345678"
+        },
+        "CouponCode": null,
+        "DiscountAmount": 0,
+        "SubscriptionDiscount": 0
+      },
+      {
+        "Id": "badcc4257be143a090597a7437ff29a6",
+        "OrderDate": "2026-10-12T18:10:00",
+        "DeliveryDate": "2026-10-16T00:00:00",
+        "Status": "Active",
+        "Items": [
+          {
+            "ProductId": "M006",
+            "ProductName": "Timber Trifold Wallet",
+            "UnitPrice": 49.65,
+            "Quantity": 1,
+            "Rating": null
+          }
+        ],
+        "PaymentMethod": "Cash",
+        "Profile": {
+          "Name": "Cont Demo",
+          "Address": "Str. Exemplu 10, Timisoara",
+          "Email": "demo@metrorex.ro",
+          "Phone": "0712345678"
+        },
+        "CouponCode": null,
+        "DiscountAmount": 0,
+        "SubscriptionDiscount": 0
+      }
+    ],
+    "Notifications": []
+  }
+]

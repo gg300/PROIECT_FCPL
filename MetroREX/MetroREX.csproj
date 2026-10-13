@@ -19,6 +19,7 @@
     <None Update="assets\**\*" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Storage\products.xlsx" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Storage\email.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Storage\users.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

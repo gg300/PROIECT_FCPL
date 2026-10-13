@@ -41,13 +41,14 @@ internal sealed class ProductListView : ViewBase
         {
             if (e.RowIndex >= 0)
             {
-                AddSelectedToCart();
+                OpenSelected();
             }
         };
         Ui.AddRow(column, _grid, fill: true);
  
         var actions = Ui.Bar(this);
-        actions.Controls.Add(Ui.PrimaryButton(this, "Adauga in cos", (_, _) => AddSelectedToCart()));
+        actions.Controls.Add(Ui.PrimaryButton(this, "Vezi produsul", (_, _) => OpenSelected()));
+        actions.Controls.Add(Ui.SecondaryButton(this, "Adauga 1 buc. in cos", (_, _) => AddSelectedToCart()));
         Ui.AddRow(column, actions);
  
         Controls.Add(column);
@@ -81,13 +82,25 @@ internal sealed class ProductListView : ViewBase
             _grid.Rows[index].Tag = product;
         }
  
-        Ui.Note(_message, "Dublu-click pe un produs sau „Adauga in cos” pentru a-l adauga.");
+        Ui.Note(_message, "Dublu-click pe un produs ca sa vezi detaliile, culorile si specificatiile.");
     }
  
     /// <summary>Numele vanzatorului; pentru cei la care utilizatorul este abonat se arata si reducerea.</summary>
     private string SellerText(Product product) => Services.Subscriptions.IsSubscribed(product.Seller)
         ? $"{product.Seller} (-{SubscriptionService.DiscountPercent}%)"
         : product.Seller;
+
+    private void OpenSelected()
+    {
+        if (_grid.CurrentRow?.Tag is not Product product)
+        {
+            Ui.Say(_message, "Selecteaza mai intai un produs.", isError: true);
+            return;
+        }
+
+        var id = product.Id;
+        Shell.Navigate(() => new ProductView(Shell, id));
+    }
 
     private void AddSelectedToCart()
     {
@@ -108,4 +121,4 @@ internal sealed class ProductListView : ViewBase
         Shell.RefreshCartCount();
         Ui.Say(_message, $"„{product.Name}” a fost adaugat in cos.");
     }
-}
+}

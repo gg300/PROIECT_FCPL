@@ -36,6 +36,23 @@ internal sealed class MainForm : Form
         ApplyMetrics();
     }
 
+    // ===== Procesele asincrone ale magazinului =====
+    // Pornesc o singura data, odata cu aplicatia: zi noua (preturi ±20%, notificari, cupon zilnic, livrari),
+    // citirea/scrierea Excel la 10 secunde. Fereastra principala traieste cat aplicatia (doar se ascunde).
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        _services.Runtime.RunDailyJobsIfNeeded();
+        _services.Runtime.Start();
+    }
+
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+        _services.Repository.Flush(); // salveaza notificarile ramase nesalvate
+        base.OnFormClosing(e);
+    }
+
     /// <summary>Marginile antetului / subsolului cresc si scad cu latimea ferestrei; sloganul dispare pe ferestre inguste.</summary>
     private void ApplyMetrics()
     {

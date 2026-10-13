@@ -1,4 +1,5 @@
 using MetroREX.Controls;
+using MetroREX.Models;
 using MetroREX.Services;
 
 namespace MetroREX.Forms;
@@ -12,7 +13,9 @@ internal sealed class ShopForm : Form
     private readonly FlowLayoutPanel _actions;
     private readonly RoundedButton _backButton;
     private readonly RoundedButton _categoriesButton;
-    private readonly RoundedButton _subscriptionsButton;
+    private readonly RoundedButton _notificationsButton;
+    private readonly RoundedButton _accountButton;
+    private readonly ContextMenuStrip _accountMenu;
     private readonly Button _cartButton;
     private readonly Label _status;
 
@@ -20,6 +23,7 @@ internal sealed class ShopForm : Form
     private ViewBase? _currentView;
     private bool _statusIsError;
     private string _errorOperation = string.Empty;
+    private bool _modalOpen;
 
     public ShopForm(ShopServices services)
     {
@@ -37,12 +41,14 @@ internal sealed class ShopForm : Form
         _backButton = Ui.NavButton(this, "Inapoi", (_, _) => Back(), arrow: true);
         _backButton.Visible = false;
         _categoriesButton = Ui.NavButton(this, "Categorii", (_, _) => GoHome());
-        _subscriptionsButton = Ui.NavButton(this, "Abonamente", (_, _) => OpenSubscriptions());
+        _notificationsButton = Ui.NavButton(this, "Notificari", (_, _) => Open(() => new NotificationsView(this)));
+        _accountMenu = BuildAccountMenu();
+        _accountButton = Ui.NavButton(this, "Contul meu ▾", (_, _) => ShowAccountMenu());
         _cartButton = Ui.PrimaryButton(this, "Cos (0)", (_, _) => OpenCart());
         _cartButton.Margin = new Padding(LogicalToDeviceUnits(12), 0, 0, 0);
 
-        // TODO (pasul Login): aici apar si Comenzi active, Istoric, Wish list, Cupoane, Setari, Logout,
-        // afisate doar cand Services.Session.IsLoggedIn (vezi evenimentul Session.Changed).
+        // Notificari si „Contul meu” (comenzi, istoric, wish list, cupoane, abonamente, setari, logout)
+        // apar doar pentru utilizatorii autentificati (vezi UpdateAccountButtons).
         _actions = new FlowLayoutPanel
         {
             Dock = DockStyle.Right,
@@ -55,7 +61,8 @@ internal sealed class ShopForm : Form
         };
         _actions.Controls.Add(_backButton);
         _actions.Controls.Add(_categoriesButton);
-        _actions.Controls.Add(_subscriptionsButton);
+        _actions.Controls.Add(_notificationsButton);
+        _actions.Controls.Add(_accountButton);
         _actions.Controls.Add(_cartButton);
 
         var wordmark = new Wordmark { Dock = DockStyle.Left, Width = LogicalToDeviceUnits(240) };
@@ -144,22 +151,121 @@ internal sealed class ShopForm : Form
         }
     }
 
-    private void OpenSubscriptions()
+    /// <summary>Deschide o sectiune, daca nu este deja ecranul curent.</summary>
+    private void Open<TView>(Func<TView> factory) where TView : ViewBase
     {
-        if (_currentView is not SubscriptionsView)
+        if (_currentView is not TView)
         {
-            Navigate(() => new SubscriptionsView(this));
+            Navigate(factory);
         }
     }
 
+    // ===== Meniul „Contul meu” =====
+
+    private ContextMenuStrip BuildAccountMenu()
+    {
+        var menu = new ContextMenuStrip
+        {
+            Font = Theme.Body,
+            ShowImageMargin = false,
+            Padding = new Padding(LogicalToDeviceUnits(4)),
+        };
+
+        void Item(string text, EventHandler onClick)
+        {
+            var item = new ToolStripMenuItem(text) { Padding = new Padding(LogicalToDeviceUnits(8), LogicalToDeviceUnits(6), LogicalToDeviceUnits(8), LogicalToDeviceUnits(6)) };
+            item.Click += onClick;
+            menu.Items.Add(item);
+        }
+
+        Item("Comenzi active", (_, _) => Open(() => new ActiveOrdersView(this)));
+        Item("Istoricul comenzilor", (_, _) => Open(() => new OrderHistoryView(this)));
+        Item("Wish list", (_, _) => Open(() => new WishListView(this)));
+        Item("Cupoanele mele", (_, _) => Open(() => new CouponsView(this)));
+        Item("Abonamente", (_, _) => Open(() => new SubscriptionsView(this)));
+        Item("Setari", (_, _) => Open(() => new SettingsView(this)));
+        menu.Items.Add(new ToolStripSeparator());
+        Item("Logout", (_, _) => Logout());
+        return menu;
+    }
+
+    private void ShowAccountMenu() =>
+        _accountMenu.Show(_accountButton, new Point(0, _accountButton.Height));
+
+    /// <summary>Iesirea din cont: magazinul se inchide, iar fereastra principala reapare (vezi MainForm.OpenShop).</summary>
+    private void Logout()
+    {
+        Services.Auth.Logout();
+        Close();
+    }
+
     /// <summary>Butoanele rezervate utilizatorilor autentificati.</summary>
-    private void UpdateAccountButtons() => _subscriptionsButton.Visible = Services.Session.IsLoggedIn;
+    private void UpdateAccountButtons()
+    {
+        var user = Services.Session.CurrentUser;
+        _notificationsButton.Visible = user is not null;
+        _accountButton.Visible = user is not null;
+
+        if (user is not null)
+        {
+            _accountButton.Text = $"{user.Username} ▾";
+        }
+
+        RefreshNotificationCount();
+    }
+
+    /// <summary>Numarul de notificari necitite, in antet.</summary>
+    public void RefreshNotificationCount()
+    {
+        if (Services.Session.CurrentUser is not { } user)
+        {
+            return;
+        }
+
+        var unread = Services.Notifications.CountUnread(user);
+        _notificationsButton.Text = unread > 0 ? $"Notificari ({unread})" : "Notificari";
+    }
 
     /// <summary>Linia portocalie de sub sectiunea curenta din antet.</summary>
     private void UpdateActiveNav()
     {
-        _categoriesButton.Selected = _currentView is CategoriesView or ProductListView;
-        _subscriptionsButton.Selected = _currentView is SubscriptionsView;
+        _categoriesButton.Selected = _currentView is CategoriesView or ProductListView or ProductView;
+        _notificationsButton.Selected = _currentView is NotificationsView;
+        _accountButton.Selected = _currentView is ActiveOrdersView or OrderHistoryView or WishListView
+            or CouponsView or SubscriptionsView or SettingsView;
+    }
+
+    /// <summary>Reconstruieste ecranul curent (fara sa-l puna in istoric) daca afiseaza date care se schimba zilnic.</summary>
+    private void RefreshLiveView()
+    {
+        if (_currentView is ILiveView && _currentFactory is not null)
+        {
+            Display(_currentFactory);
+        }
+    }
+
+    // ===== Evaluarea produselor livrate =====
+
+    /// <summary>Cere evaluarea produselor livrate, daca exista si nu e deja deschisa alta fereastra.</summary>
+    private void PromptRatingsIfNeeded()
+    {
+        if (_modalOpen || !Visible || !RatingDialog.HasPending(Services))
+        {
+            return;
+        }
+
+        _modalOpen = true;
+        try
+        {
+            using var dialog = new RatingDialog(Services);
+            dialog.ShowDialog(this);
+        }
+        finally
+        {
+            _modalOpen = false;
+        }
+
+        RefreshLiveView();
     }
 
     private void Display(Func<ViewBase> factory)
@@ -200,8 +306,13 @@ internal sealed class ShopForm : Form
         Services.Runtime.ProductsSynchronized += OnProductsSynchronized;
         Services.Runtime.DayStarted += OnDayStarted;
         Services.Session.Changed += OnSessionChanged;
+        Services.Notifications.NotificationAdded += OnNotificationAdded;
 
         GoHome();
+        SetStatus("Sfat: Ctrl+Shift+T schimba data pentru testare (zi noua, livrari, cupoane).", isError: false);
+
+        // La intrarea in cont: produsele livrate de la ultima vizita trebuie evaluate.
+        BeginInvoke(new Action(PromptRatingsIfNeeded));
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e)
@@ -210,6 +321,8 @@ internal sealed class ShopForm : Form
         Services.Runtime.ProductsSynchronized -= OnProductsSynchronized;
         Services.Runtime.DayStarted -= OnDayStarted;
         Services.Session.Changed -= OnSessionChanged;
+        Services.Notifications.NotificationAdded -= OnNotificationAdded;
+        _accountMenu.Dispose();
 
         base.OnFormClosed(e);
     }
@@ -232,8 +345,39 @@ internal sealed class ShopForm : Form
 
     private void OnDayStarted(object? sender, EventArgs e)
     {
+        if (InvokeRequired)
+        {
+            BeginInvoke(new Action(() => OnDayStarted(sender, e)));
+            return;
+        }
+
         Sfx.Play(Sound.StationChime);
-        SetStatus("A inceput o zi noua: preturile si cupoanele au fost actualizate.", isError: false);
+        RefreshLiveView(); // inainte de SetStatus: schimbarea ecranului goleste bara de stare
+        RefreshNotificationCount();
+        SetStatus($"A inceput o zi noua ({Services.Clock.Today:dd-MM-yyyy}): preturile si cupoanele au fost actualizate.", isError: false);
+
+        // Dupa ce se termina evenimentul curent (ex.: un click in fereastra de testare).
+        BeginInvoke(new Action(PromptRatingsIfNeeded));
+    }
+
+    private void OnNotificationAdded(object? sender, NotificationEventArgs e)
+    {
+        if (InvokeRequired)
+        {
+            BeginInvoke(new Action(() => OnNotificationAdded(sender, e)));
+            return;
+        }
+
+        if (!ReferenceEquals(e.User, Services.Session.CurrentUser))
+        {
+            return;
+        }
+
+        RefreshNotificationCount();
+        if (e.Notification.Type != NotificationType.Info)
+        {
+            SetStatus(e.Notification.Message, isError: false);
+        }
     }
 
     private void SetStatus(string text, bool isError)
@@ -244,12 +388,38 @@ internal sealed class ShopForm : Form
     }
 
     // ===== Schimbarea datei pentru testare (cerinta „metoda speciala pentru data/ora”) =====
-    // Ctrl+Shift+D = +1 zi, Ctrl+Shift+R = inapoi la ceasul real.
+    // Ctrl+Shift+T = fereastra de testare, Ctrl+Shift+D = +1 zi, Ctrl+Shift+R = inapoi la ceasul real.
+
+    private void OpenDebugClock()
+    {
+        if (_modalOpen)
+        {
+            return;
+        }
+
+        _modalOpen = true;
+        try
+        {
+            using var dialog = new DebugClockDialog(Services.Clock);
+            dialog.ShowDialog(this);
+        }
+        finally
+        {
+            _modalOpen = false;
+        }
+
+        ReportClock();
+        PromptRatingsIfNeeded();
+    }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         switch (keyData)
         {
+            case Keys.Control | Keys.Shift | Keys.T:
+                OpenDebugClock();
+                return true;
+
             case Keys.Control | Keys.Shift | Keys.D:
                 Services.Clock.AdvanceDays(1);
                 ReportClock();
