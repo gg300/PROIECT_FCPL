@@ -2,7 +2,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>Autentificare cu nume de utilizator si parola.</summary>
 internal sealed class LoginForm : AuthFormBase
 {
     private readonly TextBox _username;

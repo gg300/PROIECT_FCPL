@@ -15,4 +15,12 @@ public class User
     public List<Coupon> Coupons { get; set; } = new();
     public List<Order> Orders { get; set; } = new();
     public List<Notification> Notifications { get; set; } = new();
+
+    public int LoyaltyPoints { get; set; }
+
+    public int LifetimePoints { get; set; }
+
+    public List<LoyaltyEntry> LoyaltyHistory { get; set; } = new();
+
+    public List<ReturnRequest> Returns { get; set; } = new();
 }

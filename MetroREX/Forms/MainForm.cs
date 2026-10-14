@@ -3,7 +3,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>Fereastra principala (pagina de start): Login / Creare cont / Fara cont. Layout responsive.</summary>
 internal sealed class MainForm : Form
 {
     private readonly ShopServices _services;
@@ -36,10 +35,6 @@ internal sealed class MainForm : Form
         ApplyMetrics();
     }
 
-    // ===== Procesele asincrone ale magazinului =====
-    // Pornesc o singura data, odata cu aplicatia: zi noua (preturi ±20%, notificari, cupon zilnic, livrari),
-    // citirea/scrierea Excel la 10 secunde. Fereastra principala traieste cat aplicatia (doar se ascunde).
-
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
@@ -49,11 +44,10 @@ internal sealed class MainForm : Form
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
-        _services.Repository.Flush(); // salveaza notificarile ramase nesalvate
+        _services.Repository.Flush();
         base.OnFormClosing(e);
     }
 
-    /// <summary>Marginile antetului / subsolului cresc si scad cu latimea ferestrei; sloganul dispare pe ferestre inguste.</summary>
     private void ApplyMetrics()
     {
         int inset = Math.Clamp(ClientSize.Width / 24, LogicalToDeviceUnits(20), LogicalToDeviceUnits(48));
@@ -65,7 +59,6 @@ internal sealed class MainForm : Form
         _tagline.Visible = ClientSize.Width >= LogicalToDeviceUnits(720);
     }
 
-    // ===== Header: acelasi antet inchis ca in magazin =====
     private HeaderBar BuildHeader()
     {
         var header = new HeaderBar
@@ -89,7 +82,6 @@ internal sealed class MainForm : Form
         return header;
     }
 
-    // ===== Corpul: panoul de brand + cardul de acces =====
     private Control BuildBody()
     {
         var hero = new HeroPanel();
@@ -116,11 +108,6 @@ internal sealed class MainForm : Form
         return new ResponsiveBody(hero, access) { Dock = DockStyle.Fill };
     }
 
-    /// <summary>
-    /// Pe ferestre late (&gt;= ~900 px) panoul de brand si cardul de acces stau una langa alta si umplu
-    /// inaltimea; pe cele inguste se aseaza una sub alta (centrate, latime maxima ~680 px), iar corpul se
-    /// deruleaza vertical daca nu incap.
-    /// </summary>
     private sealed class ResponsiveBody : Panel
     {
         private readonly HeroPanel _hero;
@@ -139,7 +126,6 @@ internal sealed class MainForm : Form
             Controls.Add(access);
         }
 
-        /// <summary>Plaseaza cardul (fara umbra) exact in dreptunghiul dat; umbra ramane in marginea controlului.</summary>
         private static void Place(Control control, int x, int y, int width, int height)
         {
             var shadow = Surface.ShadowPadding(control);
@@ -192,7 +178,6 @@ internal sealed class MainForm : Form
         }
     }
 
-    // ===== Footer =====
     private LinePanel BuildFooter()
     {
         var footer = new LinePanel
@@ -212,9 +197,6 @@ internal sealed class MainForm : Form
         return footer;
     }
 
-    // ===== Navigare =====
-
-    /// <summary>Afiseaza fereastra de autentificare; daca utilizatorul a intrat in cont, deschide magazinul.</summary>
     private void Authenticate(Func<AuthFormBase> createDialog)
     {
         using var dialog = createDialog();
@@ -226,7 +208,6 @@ internal sealed class MainForm : Form
         }
     }
 
-    /// <summary>Deschide magazinul (cu utilizatorul curent din sesiune sau ca vizitator) si ascunde fereastra principala.</summary>
     private void OpenShop()
     {
         var shopForm = new ShopForm(_services);

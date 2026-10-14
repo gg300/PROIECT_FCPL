@@ -2,7 +2,6 @@ using MetroREX.Models;
  
 namespace MetroREX.Forms;
  
-/// <summary>Cosul de cumparaturi: produse, cantitati, total.</summary>
 internal sealed class CartView : ViewBase
 {
     private readonly DataGridView _grid;
@@ -66,7 +65,6 @@ internal sealed class CartView : ViewBase
         Shell.RefreshCartCount();
     }
  
-    /// <summary>Totalul cu reducerile abonamentelor; cuponul se alege la finalizarea comenzii.</summary>
     private string TotalText(decimal fallbackSubtotal)
     {
         var result = Services.Checkout.Quote();

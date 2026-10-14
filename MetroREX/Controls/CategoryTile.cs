@@ -2,11 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>
-/// Tile mare pentru o categorie: numar-fantoma in fundal, chip cu numarul de produse, sageata si
-/// linia portocalie de "metrou". La hover cardul se ridica, devine portocaliu si totul se anima lin.
-/// Dimensiunile fonturilor se adapteaza la marimea tile-ului (design responsive).
-/// </summary>
 internal sealed class CategoryTile : Control
 {
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 15 };
@@ -38,14 +33,11 @@ internal sealed class CategoryTile : Control
         _timer.Tick += (_, _) => Step();
     }
 
-    /// <summary>Schimba numarul-fantoma (folosit cand lista se filtreaza sau se sorteaza).</summary>
     public void SetNumber(int number)
     {
         _index = number.ToString("00");
         Invalidate();
     }
-
-    // ===== Animatie =====
 
     private void Step()
     {
@@ -69,8 +61,6 @@ internal sealed class CategoryTile : Control
 
     private static float Ease(float t) => 1f - (1f - t) * (1f - t);
 
-    // ===== Desenare =====
-
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
@@ -90,7 +80,6 @@ internal sealed class CategoryTile : Control
         var card = new RectangleF(offset, offset, w, h);
         var shadow = new RectangleF(1 + s, 1 + s, w, h);
 
-        // Umbra "hard": portocalie in repaus, neagra la hover
         using (var shadowPath = Theme.RoundedRect(shadow, radius))
         using (var shadowBrush = new SolidBrush(Theme.Mix(Theme.Rex, Theme.Ink, t)))
         {
@@ -125,7 +114,6 @@ internal sealed class CategoryTile : Control
         }
     }
 
-    /// <summary>Dungi diagonale (linii de metrou) si numarul-fantoma din fundal.</summary>
     private void PaintDecor(Graphics g, RectangleF card, Color fill, float t)
     {
         var stripe = Theme.Mix(fill, Color.White, 0.06f + 0.10f * t);
@@ -152,7 +140,6 @@ internal sealed class CategoryTile : Control
         TextRenderer.DrawText(g, _index, font, rect, ghost, TextFormatFlags.NoPadding | TextFormatFlags.Left);
     }
 
-    /// <summary>Chipul cu numarul de produse, sus-stanga.</summary>
     private void PaintChip(Graphics g, RectangleF card, int pad, float t)
     {
         using var font = new Font(Theme.FontName, LogicalToDeviceUnits(12), FontStyle.Bold, GraphicsUnit.Pixel);
@@ -181,7 +168,6 @@ internal sealed class CategoryTile : Control
             fore, TextFormatFlags.NoPadding | TextFormatFlags.Left);
     }
 
-    /// <summary>Cercul cu sageata, sus-dreapta.</summary>
     private void PaintArrow(Graphics g, RectangleF card, int pad, float t)
     {
         float d = LogicalToDeviceUnits(36);
@@ -214,7 +200,6 @@ internal sealed class CategoryTile : Control
         });
     }
 
-    /// <summary>Linia de accent si numele categoriei, jos-stanga.</summary>
     private void PaintTitle(Graphics g, RectangleF card, int pad, float t)
     {
         float px = Math.Clamp(card.Height * 0.17f, LogicalToDeviceUnits(20), LogicalToDeviceUnits(32));
@@ -228,7 +213,6 @@ internal sealed class CategoryTile : Control
         int x = (int)card.X + pad;
         int y = (int)card.Bottom - pad - titleH;
 
-        // Linia portocalie (devine neagra si se lungeste la hover)
         float lineW = LogicalToDeviceUnits(28) + LogicalToDeviceUnits(44) * t;
         using (var line = new SolidBrush(Theme.Mix(Theme.Rex, Theme.Ink, t)))
         {
@@ -240,8 +224,6 @@ internal sealed class CategoryTile : Control
             TextFormatFlags.Left | TextFormatFlags.Bottom | TextFormatFlags.NoPadding
             | TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis);
     }
-
-    // ===== Stare =====
 
     protected override void OnClick(EventArgs e)
     {

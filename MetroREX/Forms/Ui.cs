@@ -3,15 +3,12 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>Mici ajutoare ca toate ecranele sa arate la fel (culorile vin din <see cref="Theme"/>).</summary>
 internal static class Ui
 {
     public static readonly Color Danger = ColorTranslator.FromHtml("#C62828");
     public static readonly Font TitleFont = new(Theme.FontName, 22f, FontStyle.Bold);
     public static readonly Font BoldFont = new(Theme.FontName, 10f, FontStyle.Bold);
     private static readonly Font ButtonFont = new(Theme.FontName, 10f, FontStyle.Bold);
-
-    // ===== Texte =====
 
     public static Label Title(Control host, string text) => new()
     {
@@ -39,7 +36,6 @@ internal static class Ui
         Margin = new Padding(0, 0, 0, host.LogicalToDeviceUnits(12)),
     };
 
-    /// <summary>Eticheta in care afisam rezultatul ultimei actiuni (succes / eroare).</summary>
     public static Label Message(Control host) => new()
     {
         AutoSize = true,
@@ -73,15 +69,12 @@ internal static class Ui
         ? "1 produs"
         : count % 100 >= 20 || (count > 0 && count % 100 == 0) ? $"{count} de produse" : $"{count} produse";
 
-    // ===== Butoane =====
-
     public static Button PrimaryButton(Control host, string text, EventHandler onClick) =>
         CreateButton(host, text, onClick, ButtonKind.Primary);
 
     public static Button SecondaryButton(Control host, string text, EventHandler onClick) =>
         CreateButton(host, text, onClick, ButtonKind.Secondary);
 
-    /// <summary>Buton mare in stil „card”: titlul pe primul rand, detaliul (muted) pe al doilea.</summary>
     public static Button CardButton(Control host, string title, string detail, EventHandler onClick)
     {
         var button = CreateButton(host, $"{title}{Environment.NewLine}{detail}", onClick, ButtonKind.Card);
@@ -91,7 +84,6 @@ internal static class Ui
         return button;
     }
 
-    /// <summary>Buton transparent pentru antetul negru (text alb, linie portocalie cand e sectiunea curenta).</summary>
     public static RoundedButton NavButton(Control host, string text, EventHandler onClick, bool arrow = false)
     {
         var button = CreateButton(host, text, onClick, ButtonKind.Ghost);
@@ -100,7 +92,6 @@ internal static class Ui
         return button;
     }
 
-    /// <summary>Tile mare, negru, pentru categorii: numarul de produse sus, numele jos, devine portocaliu la hover.</summary>
     public static Button TileButton(Control host, string title, string detail, EventHandler onClick)
     {
         var button = CreateButton(host, $"{title}{Environment.NewLine}{detail}", onClick, ButtonKind.Tile);
@@ -128,9 +119,6 @@ internal static class Ui
         return button;
     }
 
-    // ===== Tabel =====
-
-    /// <summary>DataGridView cu double buffering, ca derularea sa nu palpaie.</summary>
     private sealed class SmoothGrid : DataGridView
     {
         public SmoothGrid() => DoubleBuffered = true;
@@ -203,12 +191,9 @@ internal static class Ui
         return grid;
     }
 
-    // ===== Aranjare =====
-
-    /// <summary>O coloana verticala cu margini; randurile se adauga cu <see cref="AddRow"/>.</summary>
     public static TableLayoutPanel Column(Control host)
     {
-        var pad = host.LogicalToDeviceUnits(48); // aceeasi margine ca antetul
+        var pad = host.LogicalToDeviceUnits(48);
         var table = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -220,14 +205,12 @@ internal static class Ui
         return table;
     }
 
-    /// <summary>Adauga un rand; maximum un rand <paramref name="fill"/> pe tabel (ocupa spatiul ramas).</summary>
     public static void AddRow(TableLayoutPanel table, Control control, bool fill = false)
     {
         table.RowStyles.Add(fill ? new RowStyle(SizeType.Percent, 100) : new RowStyle(SizeType.AutoSize));
         table.Controls.Add(control, 0, table.RowStyles.Count - 1);
     }
 
-    /// <summary>Un rand orizontal de butoane / controale.</summary>
     public static FlowLayoutPanel Bar(Control host) => new()
     {
         AutoSize = true,
@@ -238,7 +221,6 @@ internal static class Ui
         Margin = new Padding(0, host.LogicalToDeviceUnits(12), 0, 0),
     };
 
-    /// <summary>Tabel „eticheta: camp”, cu randuri adaugate prin <see cref="AddField{T}"/>.</summary>
     public static TableLayoutPanel Fields(Control host)
     {
         var table = new TableLayoutPanel
@@ -255,7 +237,6 @@ internal static class Ui
         return table;
     }
 
-    /// <summary>Un rand de titlu de sectiune, pe toata latimea unui tabel creat cu <see cref="Fields"/>.</summary>
     public static void AddSection(Control host, TableLayoutPanel table, string text)
     {
         var label = Section(host, text);

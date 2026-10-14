@@ -11,4 +11,6 @@ internal sealed class CheckoutRequest
     public CardDetails? Card { get; init; }
 
     public string? CouponCode { get; init; }
+
+    public int PointsToUse { get; init; }
 }

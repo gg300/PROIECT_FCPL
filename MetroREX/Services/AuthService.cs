@@ -10,6 +10,8 @@ internal sealed class AuthService
     private readonly ShopRepository _repository;
     private readonly Session _session;
 
+    public event EventHandler<User>? UserRegistered;
+
     public AuthService(ShopRepository repository, Session session)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -40,6 +42,7 @@ internal sealed class AuthService
         };
 
         _repository.Users.Add(user);
+        UserRegistered?.Invoke(this, user);
         _repository.SaveUsers();
         return Result.Success(user);
     }

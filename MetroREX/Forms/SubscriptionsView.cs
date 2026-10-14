@@ -3,7 +3,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>Abonamente la vanzatori: lista vanzatorilor si butoanele de abonare / renuntare (doar utilizatori autentificati).</summary>
 internal sealed class SubscriptionsView : ViewBase
 {
     private readonly DataGridView _grid;

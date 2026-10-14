@@ -85,7 +85,6 @@ internal sealed class ProductListView : ViewBase
         Ui.Note(_message, "Dublu-click pe un produs ca sa vezi detaliile, culorile si specificatiile.");
     }
  
-    /// <summary>Numele vanzatorului; pentru cei la care utilizatorul este abonat se arata si reducerea.</summary>
     private string SellerText(Product product) => Services.Subscriptions.IsSubscribed(product.Seller)
         ? $"{product.Seller} (-{SubscriptionService.DiscountPercent}%)"
         : product.Seller;
@@ -121,4 +120,4 @@ internal sealed class ProductListView : ViewBase
         Shell.RefreshCartCount();
         Ui.Say(_message, $"„{product.Name}” a fost adaugat in cos.");
     }
-}
+}

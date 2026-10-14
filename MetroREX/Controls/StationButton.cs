@@ -2,11 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>
-/// Cardul unei statii din meniul principal: titlu, descriere si sageata. Dimensiunea fonturilor urmeaza
-/// inaltimea cardului, iar la hover / focus (tastatura) cardul aluneca spre linia de metrou si se coloreaza lin.
-/// <see cref="IsPrimary"/> deseneaza cardul negru (actiunea principala).
-/// </summary>
 internal class StationButton : Control
 {
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 15 };
@@ -19,16 +14,12 @@ internal class StationButton : Control
     public string Info { get; set; } = "";
     public bool IsGuest { get; set; }
 
-    /// <summary>Cardul negru (actiunea principala); devine portocaliu la hover.</summary>
     public bool IsPrimary { get; set; }
 
-    /// <summary>True cand mouse-ul e deasupra sau cardul are focus de la tastatura.</summary>
     public bool IsActive => _hover || (Focused && ShowFocusCues);
 
-    /// <summary>Progresul animatiei, 0..1 (folosit de linia de metrou pentru cercuri).</summary>
     public float Progress => 1f - (1f - _t) * (1f - _t);
 
-    /// <summary>Anunta parintele sa redeseneze linia si cercurile statiilor.</summary>
     public event EventHandler? VisualStateChanged;
 
     // Spatiu lasat in jurul cardului pentru umbra si conturul de focus
@@ -54,10 +45,8 @@ internal class StationButton : Control
         _timer.Tick += (_, _) => Step();
     }
 
-    /// <summary>Centrul vertical al cardului (pentru alinierea cercului).</summary>
     public int CardCenterY => MarginTop + CardHeight / 2;
 
-    /// <summary>Marginea din stanga a cardului, in coordonatele controlului (se muta la hover).</summary>
     public int CardLeft => MarginLeft + (int)(Shift * Progress);
 
     private int CardHeight => Math.Max(10, Height - MarginTop - MarginBottom - 1);
@@ -67,8 +56,6 @@ internal class StationButton : Control
         MarginTop,
         Math.Max(10, Width - MarginLeft - MarginRight - Shift - 1),
         CardHeight);
-
-    // ===== Animatie =====
 
     private void Step()
     {
@@ -91,8 +78,6 @@ internal class StationButton : Control
 
     private void Animate() => _timer.Start();
 
-    // ===== Desenare =====
-
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
@@ -103,7 +88,6 @@ internal class StationButton : Control
         var t = Progress;
         var card = CardRect(t);
 
-        // Culorile depind de tipul cardului
         Color fill, titleColor, infoColor, arrowFill, arrowRing, arrowFore, shadowColor;
         if (IsPrimary)
         {
@@ -126,7 +110,6 @@ internal class StationButton : Control
             shadowColor = Theme.Rex;
         }
 
-        // Umbra "hard" spre linia de metrou
         if (t > 0.02f)
         {
             var shadowRect = new RectangleF(card.X - Shadow * t, card.Y + Shadow * t, card.Width, card.Height);
@@ -135,7 +118,6 @@ internal class StationButton : Control
             g.FillPath(shadowBrush, shadowPath);
         }
 
-        // Cardul + contur (punctat pentru „fara cont”)
         using (var path = Theme.RoundedRect(card, Radius))
         using (var brush = new SolidBrush(fill))
         using (var border = new Pen(Theme.Ink, 2) { DashStyle = IsGuest ? DashStyle.Dash : DashStyle.Solid })
@@ -190,7 +172,6 @@ internal class StationButton : Control
         TextRenderer.DrawText(g, Info, infoFont, new Rectangle(x, y + titleH + gap, textW, infoH), infoColor,
             TextFormatFlags.Left | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis);
 
-        // Cercul cu sageata, centrat vertical in dreapta
         var circle = new RectangleF(card.Right - padX - d, card.Y + (card.Height - d) / 2f, d, d);
         using (var fillBrush = new SolidBrush(arrowFill))
         {
@@ -217,8 +198,6 @@ internal class StationButton : Control
         });
     }
 
-    // ===== Starea vizuala =====
-
     protected override void OnMouseEnter(EventArgs e) { base.OnMouseEnter(e); _hover = true; Animate(); }
     protected override void OnMouseLeave(EventArgs e) { base.OnMouseLeave(e); _hover = false; _down = false; Animate(); }
     protected override void OnMouseDown(MouseEventArgs e) { base.OnMouseDown(e); _down = true; Invalidate(); }
@@ -226,7 +205,6 @@ internal class StationButton : Control
     protected override void OnGotFocus(EventArgs e) { base.OnGotFocus(e); Animate(); Invalidate(); }
     protected override void OnLostFocus(EventArgs e) { base.OnLostFocus(e); Animate(); Invalidate(); }
 
-    // ===== Enter / Space apasa butonul, ca la un buton normal =====
     protected override bool IsInputKey(Keys keyData) =>
         keyData is Keys.Enter or Keys.Space || base.IsInputKey(keyData);
 

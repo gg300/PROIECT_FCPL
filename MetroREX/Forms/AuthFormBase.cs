@@ -2,12 +2,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Baza ferestrelor de autentificare (Autentificare / Creare cont): aceeasi infatisare, aceleasi taste
-/// (Enter trimite, Esc anuleaza) si aceeasi tratare a erorilor. Clasele derivate adauga doar campurile si
-/// regula din <see cref="Submit"/>. Fereastra se inchide cu <see cref="DialogResult.OK"/> dupa ce
-/// utilizatorul a intrat in cont (<c>Session.CurrentUser</c> este setat).
-/// </summary>
 internal abstract class AuthFormBase : Form
 {
     private const int ContentWidth = 420;
@@ -83,10 +77,8 @@ internal abstract class AuthFormBase : Form
 
     protected ShopServices Services { get; }
 
-    /// <summary>Tabelul „eticheta: camp”; clasele derivate adauga aici randurile lor.</summary>
     protected TableLayoutPanel Fields { get; }
 
-    /// <summary>Verifica datele si, daca sunt corecte, incheie autentificarea cu <see cref="Complete"/>.</summary>
     protected abstract void Submit();
 
     protected void Fail(string error, Control? focus = null)
@@ -107,10 +99,8 @@ internal abstract class AuthFormBase : Form
 
     protected void Complete() => DialogResult = DialogResult.OK;
 
-    /// <summary>Un rand de titlu de sectiune, pe toata latimea tabelului de campuri.</summary>
     protected void AddSection(string text) => Ui.AddSection(this, Fields, text);
 
-    /// <summary>Adauga „Arata parola”, care dezvaluie sau ascunde toate campurile de parola date.</summary>
     protected void AddRevealToggle(params TextBox[] passwordBoxes)
     {
         var toggle = new CheckBox

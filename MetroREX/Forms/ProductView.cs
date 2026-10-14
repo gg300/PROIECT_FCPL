@@ -3,11 +3,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Pagina unui produs: nume, pret, stoc, descriere, evaluare, vanzator, culori si specificatiile intr-un
-/// tabel cu doua coloane. De aici se alege cantitatea si se adauga in cos sau in wish list.
-/// „Inapoi” revine la ecranul de unde s-a deschis produsul (lista categoriei sau wish list-ul).
-/// </summary>
 internal sealed class ProductView : ViewBase
 {
     private readonly string _productId;
@@ -66,7 +61,6 @@ internal sealed class ProductView : ViewBase
         actions.Controls.Add(_stockNote);
         actions.Controls.Add(Ui.PrimaryButton(this, "Adauga in cos", (_, _) => AddToCart()));
 
-        // Wish list-ul este doar pentru utilizatorii autentificati.
         if (Services.Session.IsLoggedIn)
         {
             _wishButton = Ui.SecondaryButton(this, string.Empty, (_, _) => ToggleWishList());
@@ -80,13 +74,10 @@ internal sealed class ProductView : ViewBase
         RefreshWishButton();
     }
 
-    // ===== Constructie =====
-
     private Control BuildBody(Product product)
     {
         var gap = LogicalToDeviceUnits(24);
 
-        // Stanga: detaliile produsului (se deruleaza daca descrierea e lunga).
         var details = new Panel
         {
             Dock = DockStyle.Fill,
@@ -129,7 +120,6 @@ internal sealed class ProductView : ViewBase
 
         details.Controls.Add(fields);
 
-        // Dreapta: specificatiile, tabel cu doua coloane.
         var specs = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -198,9 +188,6 @@ internal sealed class ProductView : ViewBase
         return $"{new string('★', full)}{new string('☆', 5 - full)}  {Ui.RatingText(product)}";
     }
 
-    // ===== Actiuni =====
-
-    /// <summary>Cantitatea maxima = stocul minus ce este deja in cos.</summary>
     private void RefreshStock()
     {
         var product = Services.Catalog.FindProduct(_productId);

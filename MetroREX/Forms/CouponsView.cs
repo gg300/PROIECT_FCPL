@@ -2,7 +2,6 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>Cupoanele utilizatorului (categorie, data expirarii, reducere) si adaugarea unui cod nou AAA-BBB-CCC.</summary>
 internal sealed class CouponsView : ViewBase, ILiveView
 {
     private readonly DataGridView _grid;
@@ -18,7 +17,6 @@ internal sealed class CouponsView : ViewBase, ILiveView
         _count = Ui.Muted(this, string.Empty);
         Ui.AddRow(column, _count);
 
-        // Introducerea unui cupon nou
         var add = Ui.Bar(this);
         add.Margin = new Padding(0, 0, 0, LogicalToDeviceUnits(4));
         _code = Inputs.Text("AAA-BBB-CCC");

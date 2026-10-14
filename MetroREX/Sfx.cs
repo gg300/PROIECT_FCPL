@@ -2,7 +2,6 @@ using System.Media;
 
 namespace MetroREX;
 
-/// <summary>Every sound effect in the app. The file for each one is assets/sounds/&lt;name&gt;.wav.</summary>
 internal enum Sound
 {
     AddToCart,
@@ -15,15 +14,10 @@ internal enum Sound
     Roar,
 }
 
-/// <summary>
-/// Plays the short sound effects. Missing files or a machine without audio never break the app: the
-/// sound is simply skipped. Only one effect plays at a time (a new one replaces the previous).
-/// </summary>
 internal static class Sfx
 {
     private static readonly Dictionary<Sound, SoundPlayer?> Players = new();
 
-    /// <summary>When true nothing plays (toggled with Ctrl+M in the shop).</summary>
     public static bool Muted { get; set; }
 
     private static string FileName(Sound sound) => sound switch

@@ -2,10 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>
-/// Afiseaza assets/logo.png pe fundal transparent (se vede ce deseneaza parintele din spate).
-/// Daca fisierul lipseste, deseneaza un chenar punctat cu instructiunea.
-/// </summary>
 internal class LogoBox : Control
 {
     public static readonly string LogoPath =
@@ -50,7 +46,6 @@ internal class LogoBox : Control
             return;
         }
 
-        // Placeholder
         var rect = new RectangleF(2, 2, Width - 5, Height - 5);
         using var path = Theme.RoundedRect(rect, LogicalToDeviceUnits(14));
         using var pen = new Pen(Theme.Muted, 3) { DashStyle = DashStyle.Dash };

@@ -2,7 +2,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>Baza ecranelor magazinului. Un ecran este un UserControl afisat in <see cref="ShopForm"/>.</summary>
 internal abstract class ViewBase : UserControl
 {
     protected ViewBase(ShopForm shell)
@@ -20,10 +19,6 @@ internal abstract class ViewBase : UserControl
     protected ShopServices Services => Shell.Services;
 }
 
-/// <summary>
-/// Ecranele marcate cu aceasta interfata se reconstruiesc singure cand incepe o zi noua
-/// (preturi noi, comenzi livrate, cupoane expirate), ca sa nu arate date vechi.
-/// </summary>
 internal interface ILiveView
 {
 }

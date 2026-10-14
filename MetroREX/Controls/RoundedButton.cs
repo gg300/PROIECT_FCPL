@@ -11,12 +11,6 @@ internal enum ButtonKind
     Tile,       // big black tile that turns orange and lifts on hover
 }
 
-/// <summary>
-/// Custom-painted button with several looks (see <see cref="ButtonKind"/>). Still a normal
-/// <see cref="Button"/>, so Click, AcceptButton, CancelButton and AutoSize keep working.
-/// Arrows are drawn as vectors (either <see cref="Arrow"/> or a leading "←" in the text), so they never
-/// depend on the font having that glyph.
-/// </summary>
 internal sealed class RoundedButton : Button
 {
     private bool _hover;
@@ -25,10 +19,8 @@ internal sealed class RoundedButton : Button
 
     public ButtonKind Kind { get; set; } = ButtonKind.Secondary;
 
-    /// <summary>Draws a left arrow before the text (for "back" buttons).</summary>
     public bool Arrow { get; set; }
 
-    /// <summary>Marks the current section: Ghost buttons get an orange underline.</summary>
     public bool Selected
     {
         get => _selected;
@@ -49,7 +41,6 @@ internal sealed class RoundedButton : Button
     private int ArrowWidth => LogicalToDeviceUnits(14);
     private int ArrowGap => LogicalToDeviceUnits(8);
 
-    /// <summary>Text without the leading arrow; also swaps the typographic minus for a plain hyphen.</summary>
     private string DisplayText(out bool hasArrow)
     {
         var text = Text.Replace('\u2212', '-');
@@ -68,7 +59,6 @@ internal sealed class RoundedButton : Button
             Math.Max(MinimumSize.Height, size.Height + LogicalToDeviceUnits(16)));
     }
 
-    /// <summary>Nearest non-transparent parent color, so the rounded corners blend in.</summary>
     private Color Backdrop()
     {
         for (var c = Parent; c is not null; c = c.Parent)
@@ -148,8 +138,6 @@ internal sealed class RoundedButton : Button
         }
     }
 
-    // ===== Ghost: navigation buttons on the dark header =====
-
     private void PaintGhost(Graphics g)
     {
         var rect = new RectangleF(0.75f, 0.75f, Width - 1.5f, Height - 1.5f);
@@ -176,8 +164,6 @@ internal sealed class RoundedButton : Button
             g.FillRectangle(bar, x, Height - h - LogicalToDeviceUnits(4), total, h);
         }
     }
-
-    // ===== Tile: big category tiles =====
 
     private void PaintTile(Graphics g)
     {
@@ -229,7 +215,6 @@ internal sealed class RoundedButton : Button
         const TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis;
         var huge = new Size(int.MaxValue, int.MaxValue);
 
-        // Detail (product count) top-left
         int infoH = 0;
         if (lines.Length > 1)
         {
@@ -239,13 +224,11 @@ internal sealed class RoundedButton : Button
                 detailColor, flags);
         }
 
-        // Title bottom-left
         int titleH = TextRenderer.MeasureText(g, lines[0], titleFont, huge, TextFormatFlags.NoPadding).Height;
         TextRenderer.DrawText(g, lines[0], titleFont,
             new Rectangle(bounds.X + padX, bounds.Bottom - padY - titleH, bounds.Width - 2 * padX, titleH),
             titleColor, flags);
 
-        // Arrow top-right
         float ax = bounds.Right - padX - ArrowWidth;
         float ay = bounds.Y + padY + Math.Max(infoH, ArrowWidth) / 2f;
         float head = ArrowWidth * 0.42f;
@@ -258,8 +241,6 @@ internal sealed class RoundedButton : Button
             new PointF(ax + ArrowWidth - head, ay + head),
         });
     }
-
-    // ===== Shared text painting =====
 
     private void PaintFocusRing(Graphics g, RectangleF rect, Color? color = null, float inset = 3f)
     {
@@ -315,7 +296,6 @@ internal sealed class RoundedButton : Button
             TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
     }
 
-    /// <summary>First line big and bold, the rest small and muted, all left-aligned.</summary>
     private void PaintCardText(Graphics g, RectangleF rect, string text, Color fore)
     {
         var lines = text.Split('\n', 2, StringSplitOptions.TrimEntries);

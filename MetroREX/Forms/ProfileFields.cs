@@ -3,14 +3,8 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>O problema gasita la validare: mesajul si campul care trebuie corectat.</summary>
 internal readonly record struct FieldProblem(string Message, Control Field);
 
-/// <summary>
-/// Cele patru campuri ale profilului (nume, adresa, e-mail, telefon), adaugate intr-un tabel creat cu
-/// <see cref="Ui.Fields"/>. Se foloseste la creare cont si, mai tarziu, la setari si la finalizarea comenzii
-/// pentru utilizatorii fara cont.
-/// </summary>
 internal sealed class ProfileFields
 {
     private readonly TextBox _name;
@@ -39,7 +33,6 @@ internal sealed class ProfileFields
         };
     }
 
-    /// <summary>Primul camp invalid, sau <c>null</c> daca profilul este corect.</summary>
     public FieldProblem? FindProblem()
     {
         foreach (var (box, rule) in _rules)

@@ -15,6 +15,7 @@ internal sealed class CheckoutService
     private readonly IEmailSender _emailSender;
     private readonly Random _random;
     private readonly SubscriptionService _subscriptions;
+    private readonly LoyaltyService? _loyalty;
 
     public CheckoutService(
         ShopRepository repository,
@@ -22,7 +23,8 @@ internal sealed class CheckoutService
         IClock clock,
         IEmailSender emailSender,
         Random random,
-        SubscriptionService subscriptions)
+        SubscriptionService subscriptions,
+        LoyaltyService? loyalty = null)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _session = session ?? throw new ArgumentNullException(nameof(session));
@@ -30,9 +32,24 @@ internal sealed class CheckoutService
         _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
         _random = random ?? throw new ArgumentNullException(nameof(random));
         _subscriptions = subscriptions ?? throw new ArgumentNullException(nameof(subscriptions));
+        _loyalty = loyalty;
     }
 
-    public Result<OrderQuote> Quote(string? couponCode = null)
+    public Result<OrderQuote> Quote(string? couponCode = null, int pointsToUse = 0)
+    {
+        var quote = QuoteWithoutPoints(couponCode);
+        if (!quote.IsSuccess || pointsToUse <= 0 || _loyalty is null)
+        {
+            return quote;
+        }
+
+        var points = Math.Min(pointsToUse, _loyalty.MaxRedeemable(quote.Value.TotalBeforePoints));
+        return points <= 0
+            ? quote
+            : Result.Success(quote.Value with { PointsUsed = points, PointsDiscount = LoyaltyService.ValueOf(points) });
+    }
+
+    private Result<OrderQuote> QuoteWithoutPoints(string? couponCode)
     {
         var cart = _session.Cart;
         if (cart.IsEmpty)
@@ -114,7 +131,7 @@ internal sealed class CheckoutService
             }
         }
 
-        var quoteResult = Quote(request.CouponCode);
+        var quoteResult = Quote(request.CouponCode, request.PointsToUse);
         if (!quoteResult.IsSuccess)
         {
             return Result.Failure<CheckoutOutcome>(quoteResult.Error);
@@ -182,6 +199,8 @@ internal sealed class CheckoutService
             CouponCode = quote.Coupon?.Code,
             DiscountAmount = quote.Discount,
             SubscriptionDiscount = quote.SubscriptionDiscount,
+            PointsUsed = quote.PointsUsed,
+            PointsDiscount = quote.PointsDiscount,
         };
 
         foreach (var item in order.Items)
@@ -201,6 +220,11 @@ internal sealed class CheckoutService
             if (quote.Coupon is not null)
             {
                 user.Coupons.RemoveAll(coupon => coupon.Code == quote.Coupon.Code);
+            }
+
+            if (quote.PointsUsed > 0)
+            {
+                _loyalty?.Spend(user, quote.PointsUsed, order);
             }
 
             _repository.SaveUsers();

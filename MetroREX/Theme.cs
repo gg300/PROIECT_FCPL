@@ -2,13 +2,8 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX;
 
-/// <summary>
-/// Palette and typography taken from the MetroREX logo: street black, rex orange, clean white.
-/// Every color / font used anywhere in the UI lives here.
-/// </summary>
 internal static class Theme
 {
-    // ===== Colors =====
     public static readonly Color Concrete = ColorTranslator.FromHtml("#F2F0EB"); // app background (warm light grey)
     public static readonly Color Paper    = Color.White;                          // cards, inputs, grids
     public static readonly Color Ink      = ColorTranslator.FromHtml("#16161A"); // text, headers, borders
@@ -21,7 +16,6 @@ internal static class Theme
     public static readonly Color Success  = ColorTranslator.FromHtml("#1E7B4B"); // "done" messages
     public static readonly Color Zebra    = ColorTranslator.FromHtml("#FAF8F4"); // alternate grid rows
 
-    // ===== Fonts =====
     public const string FontName = "Segoe UI";
 
     public static readonly Font Body         = new(FontName, 10f);
@@ -31,9 +25,6 @@ internal static class Theme
     public static readonly Font StationTitle = new(FontName, 14f, FontStyle.Bold);
     public static readonly Font StationInfo  = new(FontName, 10f);
 
-    // ===== Helpers =====
-
-    /// <summary>Blends two colors: t = 0 gives <paramref name="a"/>, t = 1 gives <paramref name="b"/>.</summary>
     public static Color Mix(Color a, Color b, float t) => Color.FromArgb(
         (int)(a.R + (b.R - a.R) * t),
                                                                          (int)(a.G + (b.G - a.G) * t),

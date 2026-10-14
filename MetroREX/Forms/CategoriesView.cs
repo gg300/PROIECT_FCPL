@@ -5,11 +5,6 @@ using MetroREX.Controls;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Ecranul de start al magazinului, ca o pagina de catalog: banner cu linia de metrou animata, bara de
-/// cautare / sortare si tile-urile categoriilor pe un fundal cu textura. Toata pagina se deruleaza o
-/// singura data (fara bara de derulare interna), iar grila este responsive (1–4 coloane).
-/// </summary>
 internal sealed class CategoriesView : ViewBase
 {
     private static readonly Font SearchFont = new(Theme.FontName, 12f);
@@ -82,8 +77,6 @@ internal sealed class CategoriesView : ViewBase
 
     private string SortText => _sort == SortMode.Name ? "Sorteaza: A–Z" : "Sorteaza: cele mai multe produse";
 
-    // ===== Constructie =====
-
     private TableLayoutPanel BuildToolbar()
     {
         var bar = new TableLayoutPanel
@@ -103,8 +96,6 @@ internal sealed class CategoriesView : ViewBase
         bar.Controls.Add(_sortButton, 2, 0);
         return bar;
     }
-
-    // ===== Filtrare / sortare =====
 
     private void ApplyFilter()
     {
@@ -160,15 +151,6 @@ internal sealed class CategoriesView : ViewBase
         ? "1 categorie"
         : count % 100 >= 20 || (count > 0 && count % 100 == 0) ? $"{count} de categorii" : $"{count} categorii";
 
-    // =====================================================================================
-    // Pagina: fundal cu textura + asezarea bannerului, barei de unelte si a tile-urilor
-    // =====================================================================================
-
-    /// <summary>
-    /// Panou derulabil care deseneaza fundalul (puncte + lumini portocalii, ancorate in continut, deci
-    /// derulate odata cu el) si aseaza bannerul, bara de unelte si grila de tile-uri. Tile-urile si
-    /// bannerul au fundal transparent, deci vad fundalul pe care il deseneaza pagina.
-    /// </summary>
     private sealed class CatalogPage : Panel
     {
         private const int MaxColumns = 4;
@@ -205,7 +187,6 @@ internal sealed class CategoriesView : ViewBase
             Controls.Add(tile);
         }
 
-        /// <summary>Arata doar tile-urile date, in ordinea data, si le renumeroteaza.</summary>
         public void Arrange(IReadOnlyList<CategoryTile> all, IReadOnlyList<CategoryTile> shown, string emptyText)
         {
             SuspendLayout();
@@ -230,20 +211,17 @@ internal sealed class CategoriesView : ViewBase
             Invalidate(true);
         }
 
-        // ===== Asezare =====
-
         protected override void OnLayout(LayoutEventArgs levent)
         {
             base.OnLayout(levent);
 
-            int pad = LogicalToDeviceUnits(48); // aceeasi margine ca antetul
+            int pad = LogicalToDeviceUnits(48);
             int width = ClientSize.Width - 2 * pad;
             if (width <= 0)
             {
                 return;
             }
 
-            // 1) Pozitiile in coordonatele continutului.
             int y = LogicalToDeviceUnits(20);
 
             var heroShadow = Surface.ShadowPadding(_hero);
@@ -283,7 +261,6 @@ internal sealed class CategoriesView : ViewBase
             // Latimea 0: nu apare bara orizontala; doar inaltimea poate depasi fereastra.
             AutoScrollMinSize = new Size(0, bottom + LogicalToDeviceUnits(32));
 
-            // 2) Plasarea efectiva (tine cont de pozitia de derulare).
             int scrollY = AutoScrollPosition.Y;
 
             _hero.SetBounds(heroBounds.X, heroBounds.Y + scrollY, heroBounds.Width, heroBounds.Height);
@@ -305,8 +282,6 @@ internal sealed class CategoriesView : ViewBase
                 _shown[i].SetBounds(x, ty, tileWidth, tileHeight);
             }
         }
-
-        // ===== Fundal =====
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -339,7 +314,6 @@ internal sealed class CategoriesView : ViewBase
             g.FillPath(brush, path);
         }
 
-        /// <summary>Textura de puncte fine, creata o singura data pe fiecare DPI.</summary>
         private TextureBrush GetDotBrush()
         {
             if (_dotBrush is not null && _dotDpi == DeviceDpi)
@@ -378,14 +352,6 @@ internal sealed class CategoriesView : ViewBase
         }
     }
 
-    // =====================================================================================
-    // Banner: card inchis cu titlu, statistici si o linie de metrou pe care circula un tren
-    // =====================================================================================
-
-    /// <summary>
-    /// Bannerul de sus. Partea statica (umbra, card, dungi, lumina) este desenata o singura data intr-un
-    /// bitmap; animatia (trenul si statiile) redeseneaza doar banda liniei, deci costa foarte putin.
-    /// </summary>
     private sealed class Hero : Control
     {
         private const int Stations = 5;
@@ -423,8 +389,6 @@ internal sealed class CategoriesView : ViewBase
             _timer.Tick += (_, _) => Tick();
         }
 
-        // ===== Animatie =====
-
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
@@ -452,7 +416,6 @@ internal sealed class CategoriesView : ViewBase
             Invalidate(new Rectangle(card.X, (int)track.Y - band, card.Width, band * 2));
         }
 
-        /// <summary>Pozitia trenului (0..1): opreste putin la fiecare statie si ramane o clipa la capat.</summary>
         private static double Position(double seconds)
         {
             const double move = 1.3;
@@ -488,8 +451,6 @@ internal sealed class CategoriesView : ViewBase
             float inset = LogicalToDeviceUnits(32);
             return (card.X + inset, card.Right - inset, card.Bottom - LogicalToDeviceUnits(34));
         }
-
-        // ===== Desenare =====
 
         protected override void OnSizeChanged(EventArgs e)
         {
@@ -539,7 +500,6 @@ internal sealed class CategoriesView : ViewBase
 
             g.SetClip(path, CombineMode.Intersect);
 
-            // Lumina portocalie din coltul din dreapta-sus
             using (var glowPath = new GraphicsPath())
             {
                 float rx = LogicalToDeviceUnits(320);
@@ -556,7 +516,6 @@ internal sealed class CategoriesView : ViewBase
                 g.FillPath(glow, glowPath);
             }
 
-            // Dungi diagonale (linii de metrou), ca pe tile-uri
             float stripeWidth = LogicalToDeviceUnits(30);
             float stripeGap = LogicalToDeviceUnits(46);
             for (var i = 0; i < 4; i++)
@@ -600,7 +559,6 @@ internal sealed class CategoriesView : ViewBase
                 return;
             }
 
-            // Statistici, aliniate la dreapta: „1500 PRODUSE | 19 CATEGORII”
             var stats = new[] { (Value: _categories, Label: "CATEGORII"), (Value: _products, Label: "PRODUSE") };
             int right = card.Right - pad;
             int top = card.Y + LogicalToDeviceUnits(30);
@@ -643,7 +601,6 @@ internal sealed class CategoriesView : ViewBase
                 g.DrawLine(done, left, y, trainX, y);
             }
 
-            // Statiile: se aprind cand trece trenul
             float r = LogicalToDeviceUnits(9);
             for (var i = 0; i < Stations; i++)
             {
@@ -657,7 +614,6 @@ internal sealed class CategoriesView : ViewBase
                 g.DrawEllipse(ring, circle);
             }
 
-            // Trenul: o capsula alba cu trei geamuri
             float w = LogicalToDeviceUnits(46);
             float h = LogicalToDeviceUnits(18);
             var body = new RectangleF(trainX - w / 2f, y - h / 2f, w, h);
@@ -678,8 +634,6 @@ internal sealed class CategoriesView : ViewBase
                 g.FillEllipse(window, cx - wr, y - wr, wr * 2, wr * 2);
             }
         }
-
-        // ===== Ajutoare =====
 
         private static Size Measure(Graphics g, string text, Font font) =>
             TextRenderer.MeasureText(g, text, font, new Size(int.MaxValue, int.MaxValue), Flags);

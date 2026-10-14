@@ -2,14 +2,8 @@ using MetroREX.Models;
 
 namespace MetroREX.Services;
 
-/// <summary>Un vanzator din magazin, cu starea abonamentului utilizatorului curent.</summary>
 internal sealed record SellerOffer(string Name, int ProductCount, bool IsSubscribed);
 
-/// <summary>
-/// Abonamente (simulate, fara plata) la vanzatori. Un utilizator abonat primeste automat
-/// <see cref="DiscountPercent"/>% reducere la produsele vanzatorilor la care este abonat; reducerea se
-/// aplica la <see cref="CheckoutService.Quote"/> si se aduna cu cea a unui cupon.
-/// </summary>
 internal sealed class SubscriptionService
 {
     public const int DiscountPercent = 10;
@@ -24,7 +18,6 @@ internal sealed class SubscriptionService
         _session = session ?? throw new ArgumentNullException(nameof(session));
     }
 
-    /// <summary>Vanzatorii din catalog, in ordine alfabetica. Pentru vizitatori nimeni nu este „abonat”.</summary>
     public IReadOnlyList<SellerOffer> GetSellers() => _repository.Products
         .Where(product => !string.IsNullOrWhiteSpace(product.Seller))
         .GroupBy(product => product.Seller, StringComparer.OrdinalIgnoreCase)
@@ -35,7 +28,6 @@ internal sealed class SubscriptionService
     public bool IsSubscribed(string seller) =>
         _session.CurrentUser?.Subscriptions.Contains(seller, StringComparer.OrdinalIgnoreCase) ?? false;
 
-    /// <summary>Reducerea pentru o linie de comanda: 0 daca utilizatorul nu este abonat la vanzatorul produsului.</summary>
     public decimal DiscountFor(Product product, decimal lineTotal)
     {
         ArgumentNullException.ThrowIfNull(product);

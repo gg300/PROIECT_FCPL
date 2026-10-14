@@ -2,12 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>
-/// Panoul de brand din stanga paginii de start: un card inchis la culoare cu logo-ul pe o placa luminoasa
-/// (cu halou portocaliu si inele fine in spate), titlul pe doua randuri si un text scurt. Responsive: pe carduri
-/// late si joase placa sta in stanga si textul in dreapta; altfel totul este centrat pe verticala. Fonturile
-/// titlului se potrivesc singure in latimea disponibila.
-/// </summary>
 internal class HeroPanel : Panel
 {
     private const string Line1Text = "Haine pentru oras.";
@@ -32,8 +26,6 @@ internal class HeroPanel : Panel
         BackColor = Theme.Concrete;
         Controls.Add(_logo);
     }
-
-    // ===== Desenare =====
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -78,7 +70,6 @@ internal class HeroPanel : Panel
             _align | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak);
     }
 
-    /// <summary>Haloul portocaliu, inelele fine si placa luminoasa pe care sta logo-ul.</summary>
     private void PaintBackdrop(Graphics g)
     {
         if (_plate.IsEmpty)
@@ -90,7 +81,6 @@ internal class HeroPanel : Panel
         float cy = _plate.Y + _plate.Height / 2f;
         float half = _plate.Width / 2f;
 
-        // Halou
         float glowR = half * 2.1f;
         using (var glowPath = new GraphicsPath())
         {
@@ -103,7 +93,6 @@ internal class HeroPanel : Panel
             g.FillPath(glow, glowPath);
         }
 
-        // Inele fine
         using (var ringPen = new Pen(Color.FromArgb(24, Color.White), 1.5f))
         {
             foreach (var k in new[] { 1.38f, 1.78f })
@@ -113,7 +102,6 @@ internal class HeroPanel : Panel
             }
         }
 
-        // Inelul portocaliu si placa
         float orangeR = half + LogicalToDeviceUnits(10);
         using (var orange = new Pen(Theme.Rex, 3f))
         {
@@ -123,8 +111,6 @@ internal class HeroPanel : Panel
         using var plate = new LinearGradientBrush(_plate, Color.White, Theme.Concrete, LinearGradientMode.ForwardDiagonal);
         g.FillEllipse(plate, _plate);
     }
-
-    // ===== Aranjare =====
 
     protected override void OnLayout(LayoutEventArgs e)
     {
@@ -142,7 +128,6 @@ internal class HeroPanel : Panel
         bool horizontal = card.Width >= LogicalToDeviceUnits(560) && card.Width > card.Height * 1.3;
         int gap = LogicalToDeviceUnits(20);
 
-        // Zona de text: dreapta placii (orizontal) sau toata latimea (vertical)
         int plate = 0;
         int textX = inner.X;
         int textW = inner.Width;
@@ -189,7 +174,6 @@ internal class HeroPanel : Panel
             blockY = y + plate + gap;
         }
 
-        // Logo-ul sta in placa, putin mai mic decat ea
         int logo = (int)(_plate.Width * 0.9);
         _logo.Size = new Size(logo, logo);
         _logo.Location = new Point(_plate.X + (_plate.Width - logo) / 2, _plate.Y + (_plate.Height - logo) / 2);
@@ -203,7 +187,6 @@ internal class HeroPanel : Panel
         Invalidate();
     }
 
-    /// <summary>Cel mai mare font bold (in pixeli) in care "Testate de un T-Rex." incape in latimea data.</summary>
     private Font FitHeadlineFont(int maxWidth)
     {
         float px = Math.Clamp(maxWidth / 11.5f, LogicalToDeviceUnits(22), LogicalToDeviceUnits(46));
@@ -237,14 +220,12 @@ internal class HeroPanel : Panel
     }
 }
 
-/// <summary>Panou pentru subsol (si alte benzi): linie fina de separare plus un mic accent portocaliu.</summary>
 internal class LinePanel : Panel
 {
     private int _inset = -1;
 
     public bool LineOnTop { get; set; }
 
-    /// <summary>Marginea accentului din stanga, in pixeli; negativ = 48 de unitati logice.</summary>
     public int Inset
     {
         get => _inset;

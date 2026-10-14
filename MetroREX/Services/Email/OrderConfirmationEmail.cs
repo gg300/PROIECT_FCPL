@@ -43,6 +43,11 @@ internal static class OrderConfirmationEmail
             body.AppendLine(Line($"Reducere abonament: -{Money.Format(order.SubscriptionDiscount)}"));
         }
 
+        if (order.PointsDiscount > 0)
+        {
+            body.AppendLine(Line($"Puncte de loialitate ({order.PointsUsed}): -{Money.Format(order.PointsDiscount)}"));
+        }
+
         body.AppendLine(Line($"Total comanda: {Money.Format(order.TotalCost)}"));
         body.AppendLine();
         body.AppendLine(Line($"Adresa de livrare: {order.Profile.Address}"));

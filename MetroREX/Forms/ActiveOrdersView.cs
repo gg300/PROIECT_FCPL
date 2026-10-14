@@ -2,7 +2,6 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>Comenzile plasate si inca nelivrate. Selectarea unei comenzi arata produsele ei.</summary>
 internal sealed class ActiveOrdersView : ViewBase, ILiveView
 {
     private readonly DataGridView _orders;

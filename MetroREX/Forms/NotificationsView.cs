@@ -2,10 +2,6 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Notificarile utilizatorului: schimbari de pret si produse revenite pe stoc (din wish list), livrari.
-/// La deschidere toate devin citite.
-/// </summary>
 internal sealed class NotificationsView : ViewBase, ILiveView
 {
     private readonly DataGridView _grid;

@@ -2,12 +2,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Metoda speciala pentru testare (cerinta din proiect): schimba data/ora „magazinului”.
-/// Totul in aplicatie foloseste <see cref="Clock"/>, deci o zi noua simulata declanseaza imediat
-/// procesele zilnice: variatia preturilor, notificarile, cuponul zilnic si livrarile.
-/// Se deschide din magazin cu Ctrl+Shift+T.
-/// </summary>
 internal sealed class DebugClockDialog : Form
 {
     private readonly Clock _clock;

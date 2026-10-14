@@ -75,6 +75,25 @@
         "SubscriptionDiscount": 0
       }
     ],
-    "Notifications": []
+    "Notifications": [],
+    "LoyaltyPoints": 322,
+    "LifetimePoints": 322,
+    "LoyaltyHistory": [
+      {
+        "Date": "2026-10-01T09:00:00",
+        "Points": 300,
+        "Reason": "Bonus de bun venit (cont demo)",
+        "OrderId": null,
+        "IsOrderEarning": false
+      },
+      {
+        "Date": "2026-10-04T08:00:00",
+        "Points": 22,
+        "Reason": "Comanda livrata 27451D2D",
+        "OrderId": "27451d2d8a824c329049de8f1eb5bc84",
+        "IsOrderEarning": true
+      }
+    ],
+    "Returns": []
   }
 ]

@@ -2,11 +2,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Dupa livrare, utilizatorul da fiecarui produs primit o nota de la 1 la 5 stele.
-/// Produsele se iau pe rand; „Mai tarziu” inchide fereastra, iar cererea reapare la urmatoarea livrare
-/// sau din Istoricul comenzilor.
-/// </summary>
 internal sealed class RatingDialog : Form
 {
     private readonly ShopServices _services;
@@ -85,7 +80,6 @@ internal sealed class RatingDialog : Form
         ShowNext();
     }
 
-    /// <summary>True daca utilizatorul curent are produse livrate neevaluate.</summary>
     public static bool HasPending(ShopServices services) =>
         services.Session.IsLoggedIn && services.Orders.GetPendingRatings().Count > 0;
 
@@ -101,7 +95,7 @@ internal sealed class RatingDialog : Form
             }
             else
             {
-                _closeWhenShown = true; // nu exista nimic de evaluat: se inchide imediat ce apare
+                _closeWhenShown = true;
             }
 
             return;

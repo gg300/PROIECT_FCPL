@@ -1,6 +1,5 @@
 namespace MetroREX.Forms;
 
-/// <summary>Campuri de text cu acelasi aspect pe toate ecranele (restul controalelor sunt in <see cref="Ui"/>).</summary>
 internal static class Inputs
 {
     private static readonly Font InputFont = new(Theme.FontName, 10.5f);
@@ -14,7 +13,6 @@ internal static class Inputs
         PlaceholderText = placeholder,
     };
 
-    /// <summary>Lista derulanta in care se poate doar alege (fara text liber).</summary>
     public static ComboBox Choice() => new()
     {
         DropDownStyle = ComboBoxStyle.DropDownList,

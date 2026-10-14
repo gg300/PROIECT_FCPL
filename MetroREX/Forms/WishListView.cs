@@ -2,10 +2,6 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Wish list-ul utilizatorului: nume, pret, cantitate disponibila. Deschiderea unui produs duce la pagina
-/// lui; „Inapoi” de acolo revine aici (nu la lista de produse), pentru ca ecranul acesta ramane in istoric.
-/// </summary>
 internal sealed class WishListView : ViewBase, ILiveView
 {
     private readonly DataGridView _grid;

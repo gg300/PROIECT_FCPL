@@ -2,14 +2,11 @@ using MetroREX.Models;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Istoricul comenzilor livrate, in formatul din cerinta:
-/// data livrarii, fiecare produs cu Pret / Cantitate / Total si costul total al comenzii.
-/// </summary>
 internal sealed class OrderHistoryView : ViewBase, ILiveView
 {
     private readonly RichTextBox _text;
     private readonly Button _rateButton;
+    private readonly Button _returnButton;
     private readonly Label _summary;
 
     public OrderHistoryView(ShopForm shell) : base(shell)
@@ -32,7 +29,6 @@ internal sealed class OrderHistoryView : ViewBase, ILiveView
             Margin = Padding.Empty,
         };
 
-        // Rama alba cu padding in jurul textului.
         var frame = new Panel
         {
             Dock = DockStyle.Fill,
@@ -46,6 +42,8 @@ internal sealed class OrderHistoryView : ViewBase, ILiveView
         var actions = Ui.Bar(this);
         _rateButton = Ui.PrimaryButton(this, "Evalueaza produsele", (_, _) => Rate());
         actions.Controls.Add(_rateButton);
+        _returnButton = Ui.SecondaryButton(this, "Returneaza produse", (_, _) => Shell.Navigate(() => new NewReturnView(Shell)));
+        actions.Controls.Add(_returnButton);
         Ui.AddRow(column, actions);
 
         Controls.Add(column);
@@ -72,6 +70,7 @@ internal sealed class OrderHistoryView : ViewBase, ILiveView
         var pending = Services.Orders.GetPendingRatings().Count;
         _rateButton.Text = pending > 0 ? $"Evalueaza produsele ({pending})" : "Toate produsele sunt evaluate";
         _rateButton.Enabled = pending > 0;
+        _returnButton.Enabled = Services.Returns.GetEligibleOrders().Count > 0;
     }
 
     private void AppendOrder(Order order)
@@ -83,7 +82,9 @@ internal sealed class OrderHistoryView : ViewBase, ILiveView
         {
             var item = order.Items[index];
             var stars = item.Rating is { } rating ? $"   {new string('★', rating)}{new string('☆', 5 - rating)}" : string.Empty;
-            Write($"Produs {index + 1}: {item.ProductName} / Pret: {item.UnitPrice:N2} lei / Cantitate: {item.Quantity} / Total: {item.Total:N2} lei{stars}");
+            var returned = Services.Returns.ReturnedQuantity(order, item.ProductId);
+            var returnedText = returned > 0 ? $"   (returnat: {returned} buc.)" : string.Empty;
+            Write($"Produs {index + 1}: {item.ProductName} / Pret: {item.UnitPrice:N2} lei / Cantitate: {item.Quantity} / Total: {item.Total:N2} lei{stars}{returnedText}");
         }
 
         if (order.DiscountAmount > 0)
@@ -96,7 +97,18 @@ internal sealed class OrderHistoryView : ViewBase, ILiveView
             Write($"Reducere abonamente: -{order.SubscriptionDiscount:N2} lei");
         }
 
+        if (order.PointsDiscount > 0)
+        {
+            Write($"Puncte de loialitate ({order.PointsUsed}): -{order.PointsDiscount:N2} lei");
+        }
+
         Write($"Costul total al comenzii: {order.TotalCost:N2} lei", bold: true);
+
+        var daysLeft = Services.Returns.DaysLeft(order);
+        if (daysLeft >= 0)
+        {
+            Write($"Retur posibil pana la {order.DeliveryDate.AddDays(MetroREX.Services.ReturnService.ReturnWindowDays):dd-MM-yyyy}", muted: true);
+        }
         Write(string.Empty);
     }
 

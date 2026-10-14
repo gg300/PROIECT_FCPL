@@ -2,7 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>"Metro" in white and "REX" in orange, like the logo, for the dark header. Click it to go home.</summary>
 internal sealed class Wordmark : Control
 {
     private static readonly Font MarkFont = new(Theme.FontName, 24f, FontStyle.Bold | FontStyle.Italic);
@@ -34,7 +33,6 @@ internal sealed class Wordmark : Control
     }
 }
 
-/// <summary>Dark header bar with an orange "metro line" along the bottom edge.</summary>
 internal sealed class HeaderBar : Panel
 {
     public HeaderBar()

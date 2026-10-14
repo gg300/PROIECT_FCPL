@@ -3,11 +3,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>
-/// Finalizarea comenzii: rezumat cu reduceri (stanga) si cupon, date de livrare pentru vizitatori, plata
-/// (dreapta). Preturile si reducerile vin din <see cref="CheckoutService.Quote"/>, comanda se plaseaza cu
-/// <see cref="CheckoutService.PlaceOrderAsync"/>; formularul doar aduna datele si evidentiaza campul gresit.
-/// </summary>
 internal sealed class CheckoutView : ViewBase
 {
     private readonly DataGridView _grid;
@@ -15,6 +10,9 @@ internal sealed class CheckoutView : ViewBase
     private readonly Label _total;
     private readonly Label _message;
     private readonly ComboBox? _coupon;
+    private readonly NumericUpDown? _points;
+    private readonly Label? _pointsInfo;
+    private bool _updatingPoints;
     private readonly ProfileFields? _profile;
     private readonly ComboBox _payment;
     private readonly TableLayoutPanel _cardFields;
@@ -40,6 +38,26 @@ internal sealed class CheckoutView : ViewBase
         {
             Ui.AddSection(this, form, "Cupon");
             _coupon = AddCouponPicker(form);
+
+            Ui.AddSection(this, form, "T-Rex Points");
+            _points = new NumericUpDown
+            {
+                Minimum = 0,
+                Maximum = 0,
+                Increment = 10,
+                ThousandsSeparator = true,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font(Theme.FontName, 10.5f),
+            };
+            _points.ValueChanged += (_, _) =>
+            {
+                if (!_updatingPoints)
+                {
+                    ShowQuote();
+                }
+            };
+            Ui.AddField(this, form, "Folosesc", _points);
+            _pointsInfo = Ui.AddField(this, form, "Sold", new Label { AutoSize = true, ForeColor = Theme.Muted });
 
             Ui.AddSection(this, form, "Livrare");
             Ui.AddField(this, form, "Catre", new Label
@@ -70,7 +88,6 @@ internal sealed class CheckoutView : ViewBase
         _cvv = Ui.AddField(this, _cardFields, "CVV", Inputs.Password());
         _cardFields.Visible = false;
 
-        // Campurile cardului apar doar pentru plata cu cardul.
         _payment.SelectedIndexChanged += (_, _) => _cardFields.Visible = SelectedPayment == PaymentMethod.Card;
 
         var column = Ui.Column(this);
@@ -92,9 +109,8 @@ internal sealed class CheckoutView : ViewBase
 
     private Coupon? SelectedCoupon => (_coupon?.SelectedItem as CouponChoice)?.Coupon;
 
-    // ===== Constructie =====
+    private int SelectedPoints => (int)(_points?.Value ?? 0);
 
-    /// <summary>Doar cupoanele valabile pentru o categorie din cos; cosul nu se schimba cat timp ecranul e deschis.</summary>
     private ComboBox AddCouponPicker(TableLayoutPanel form)
     {
         var picker = Inputs.Choice();
@@ -159,11 +175,9 @@ internal sealed class CheckoutView : ViewBase
         return stack;
     }
 
-    // ===== Rezumat =====
-
     private void ShowQuote()
     {
-        var result = Services.Checkout.Quote(SelectedCoupon?.Code);
+        var result = Services.Checkout.Quote(SelectedCoupon?.Code, SelectedPoints);
 
         _grid.Rows.Clear();
         if (!result.IsSuccess)
@@ -195,12 +209,46 @@ internal sealed class CheckoutView : ViewBase
             lines.Add($"Reducere abonamente: -{quote.SubscriptionDiscount:N2} lei");
         }
 
+        if (quote.PointsDiscount > 0)
+        {
+            lines.Add($"Puncte de loialitate ({quote.PointsUsed}): -{quote.PointsDiscount:N2} lei");
+        }
+
+        UpdatePointsLimit(quote);
+
         _breakdown.Text = string.Join(Environment.NewLine, lines);
         _total.Text = $"Total de plata: {quote.Total:N2} lei";
         Ui.Note(_message, string.Empty);
     }
 
-    // ===== Plasarea comenzii =====
+    private void UpdatePointsLimit(OrderQuote quote)
+    {
+        if (_points is null || _pointsInfo is null || Services.Session.CurrentUser is not { } user)
+        {
+            return;
+        }
+
+        var max = Services.Loyalty.MaxRedeemable(quote.TotalBeforePoints);
+
+        _updatingPoints = true;
+        try
+        {
+            if (_points.Value > max)
+            {
+                _points.Value = max;
+            }
+
+            _points.Maximum = max;
+            _points.Enabled = max > 0;
+        }
+        finally
+        {
+            _updatingPoints = false;
+        }
+
+        _pointsInfo.Text = $"{user.LoyaltyPoints} puncte ({LoyaltyService.ValueOf(user.LoyaltyPoints):N2} lei); " +
+                           $"acum poti folosi cel mult {max} (1 punct = {LoyaltyService.PointValue:N2} lei)";
+    }
 
     private async Task PlaceOrderAsync()
     {
@@ -248,7 +296,6 @@ internal sealed class CheckoutView : ViewBase
         }
     }
 
-    /// <summary>Strange datele din formular; verificarile de aici doar evidentiaza campul gresit, restul il decide serviciul.</summary>
     private CheckoutRequest? TryBuildRequest()
     {
         UserProfile? guestProfile = null;
@@ -288,6 +335,7 @@ internal sealed class CheckoutView : ViewBase
             PaymentMethod = SelectedPayment,
             Card = card,
             CouponCode = SelectedCoupon?.Code,
+            PointsToUse = SelectedPoints,
         };
     }
 
@@ -314,8 +362,6 @@ internal sealed class CheckoutView : ViewBase
             box.SelectAll();
         }
     }
-
-    // ===== Elemente de lista =====
 
     private sealed record PaymentChoice(PaymentMethod Method, string Text)
     {

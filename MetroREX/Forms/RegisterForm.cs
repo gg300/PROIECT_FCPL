@@ -2,7 +2,6 @@ using MetroREX.Services;
 
 namespace MetroREX.Forms;
 
-/// <summary>Creare cont: nume de utilizator, parola si profil. La succes utilizatorul este deja autentificat.</summary>
 internal sealed class RegisterForm : AuthFormBase
 {
     private readonly TextBox _username;

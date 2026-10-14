@@ -2,10 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace MetroREX.Controls;
 
-/// <summary>
-/// Meniul principal desenat ca o linie de metrou: o linie portocalie verticala, cu cate un cerc si o
-/// legatura scurta pana la fiecare card. Inaltimea cardurilor se adapteaza la spatiul disponibil.
-/// </summary>
 internal class StationLine : Panel
 {
     private readonly List<StationButton> _stations = new();
@@ -23,7 +19,6 @@ internal class StationLine : Panel
         BackColor = Theme.Concrete;
     }
 
-    /// <summary>Inaltimea necesara ca toate cardurile sa incapa la dimensiunea lor normala (pentru ecrane inguste).</summary>
     public int DesiredHeight =>
         _stations.Count == 0 ? 0 : _stations.Count * LogicalToDeviceUnits(100) + (_stations.Count - 1) * Gap;
 
@@ -37,7 +32,6 @@ internal class StationLine : Panel
         return station;
     }
 
-    // Asaza cardurile unul sub altul, centrate pe verticala
     protected override void OnLayout(LayoutEventArgs e)
     {
         base.OnLayout(e);
@@ -63,7 +57,6 @@ internal class StationLine : Panel
 
     private static int CenterY(StationButton s) => s.Top + s.CardCenterY;
 
-    // Deseneaza linia, legaturile si cercurile statiilor
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);

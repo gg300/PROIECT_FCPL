@@ -24,13 +24,15 @@ internal sealed class ShopServices
         Coupons = new CouponService(repository, Session, clock, random);
         Subscriptions = new SubscriptionService(repository, Session);
         Orders = new OrderService(repository, Session, clock, Notifications);
-        Checkout = new CheckoutService(repository, Session, clock, emailSender, random, Subscriptions);
+        Loyalty = new LoyaltyService(repository, Session, clock, Notifications, Orders, Auth);
+        Checkout = new CheckoutService(repository, Session, clock, emailSender, random, Subscriptions, Loyalty);
 
         var pricing = new PricingService(repository, Notifications, random);
         var inventory = new InventoryService(repository, Notifications);
         var sync = new ProductSyncService(repository, Notifications);
 
         Runtime = new ShopRuntime(repository, clock, Coupons, pricing, inventory, Orders, sync);
+        Returns = new ReturnService(repository, Session, clock, Notifications, Loyalty, Runtime);
     }
 
     internal ShopRepository Repository { get; }
@@ -56,6 +58,10 @@ internal sealed class ShopServices
     public OrderService Orders { get; }
 
     public CheckoutService Checkout { get; }
+
+    public LoyaltyService Loyalty { get; }
+
+    public ReturnService Returns { get; }
 
     public ShopRuntime Runtime { get; }
 

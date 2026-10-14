@@ -16,11 +16,6 @@ internal enum AccessStyle
     Ghost,      // ca Secondary, dar pe fundal usor colorat
 }
 
-/// <summary>
-/// Cardul alb din dreapta paginii de start: antet (supratitlu, titlu, subtitlu), randurile de acces
-/// (<see cref="AccessOption"/>) si o nota cu avantajele contului. Inaltimea randurilor se adapteaza la spatiul
-/// disponibil; <see cref="HeightFor"/> da inaltimea necesara cand cardul sta sub prezentare, pe ferestre inguste.
-/// </summary>
 internal sealed class AccessCard : Panel
 {
     private const string OverlineText = "BINE AI VENIT";
@@ -57,8 +52,6 @@ internal sealed class AccessCard : Panel
         return option;
     }
 
-    // ===== Dimensiuni =====
-
     private int RowGap => LogicalToDeviceUnits(12);
     private float OverlinePx => LogicalToDeviceUnits(12);
     private float SubtitlePx => LogicalToDeviceUnits(14);
@@ -71,7 +64,6 @@ internal sealed class AccessCard : Panel
 
     private static int LineHeight(float px) => (int)Math.Ceiling(px * 1.35f);
 
-    /// <summary>Tot ce nu sunt randurile de acces: margini, antet, separator si nota.</summary>
     private int Chrome(int cardWidth) =>
         Pad(cardWidth) * 2
         + LineHeight(OverlinePx) + LogicalToDeviceUnits(8)
@@ -80,7 +72,6 @@ internal sealed class AccessCard : Panel
         + LogicalToDeviceUnits(20) + 1 + LogicalToDeviceUnits(14)
         + 2 * LineHeight(NotePx);
 
-    /// <summary>Inaltimea (cu umbra) necesara pentru o latime data, cu randuri de inaltime normala.</summary>
     public int HeightFor(int outerWidth)
     {
         var shadow = Surface.ShadowPadding(this);
@@ -91,8 +82,6 @@ internal sealed class AccessCard : Panel
                + Math.Max(0, count - 1) * RowGap
                + shadow.Vertical;
     }
-
-    // ===== Aranjare =====
 
     protected override void OnLayout(LayoutEventArgs e)
     {
@@ -145,8 +134,6 @@ internal sealed class AccessCard : Panel
 
         Invalidate();
     }
-
-    // ===== Desenare =====
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -205,10 +192,6 @@ internal sealed class AccessCard : Panel
     }
 }
 
-/// <summary>
-/// Un rand de acces: iconita intr-un patrat rotunjit, titlu, descriere pe maximum doua randuri si sageata.
-/// Culorile se schimba lin la hover si la focus de la tastatura. Click, Enter si Space declanseaza <c>Click</c>.
-/// </summary>
 internal sealed class AccessOption : Control
 {
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 15 };
@@ -245,8 +228,6 @@ internal sealed class AccessOption : Control
 
     private float Progress => 1f - (1f - _t) * (1f - _t);
 
-    // ===== Animatie =====
-
     private void Step()
     {
         var target = IsActive ? 1f : 0f;
@@ -266,8 +247,6 @@ internal sealed class AccessOption : Control
     }
 
     private void Animate() => _timer.Start();
-
-    // ===== Desenare =====
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -324,7 +303,6 @@ internal sealed class AccessOption : Control
         int padX = LogicalToDeviceUnits(16);
         int arrowW = LogicalToDeviceUnits(18);
 
-        // Iconita
         float tileSize = Math.Clamp(rect.Height * 0.56f, LogicalToDeviceUnits(40), LogicalToDeviceUnits(52));
         var tile = new RectangleF(rect.X + padX, rect.Y + (rect.Height - tileSize) / 2f, tileSize, tileSize);
         using (var tilePath = Theme.RoundedRect(tile, LogicalToDeviceUnits(12)))
@@ -337,7 +315,6 @@ internal sealed class AccessOption : Control
         iconBox.Inflate(-tileSize * 0.22f, -tileSize * 0.22f);
         DrawIcon(g, _icon, iconBox, iconColor);
 
-        // Text
         int textX = (int)tile.Right + LogicalToDeviceUnits(14);
         int textW = (int)(rect.Right - padX - arrowW - LogicalToDeviceUnits(12)) - textX;
         float titlePx = Math.Clamp(rect.Height * 0.22f, LogicalToDeviceUnits(15), LogicalToDeviceUnits(18));
@@ -361,7 +338,6 @@ internal sealed class AccessOption : Control
                 TextFormatFlags.Left | TextFormatFlags.NoPadding | TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis);
         }
 
-        // Sageata (aluneca spre dreapta la hover)
         float ax = rect.Right - padX - arrowW + LogicalToDeviceUnits(3) * t;
         float ay = rect.Y + rect.Height / 2f;
         float head = arrowW * 0.38f;
@@ -374,8 +350,6 @@ internal sealed class AccessOption : Control
             new PointF(ax + arrowW - head, ay + head),
         });
     }
-
-    // ===== Iconite desenate vectorial (nu depind de fonturi) =====
 
     private static void DrawIcon(Graphics g, AccessIcon icon, RectangleF box, Color color)
     {
@@ -421,8 +395,6 @@ internal sealed class AccessOption : Control
         g.DrawEllipse(pen, x + s * 0.32f, y + s * 0.10f, s * 0.36f, s * 0.36f);
         g.DrawArc(pen, x + s * 0.14f, y + s * 0.58f, s * 0.72f, s * 0.72f, 180, 180);
     }
-
-    // ===== Stare =====
 
     protected override void OnMouseEnter(EventArgs e) { base.OnMouseEnter(e); _hover = true; Animate(); }
     protected override void OnMouseLeave(EventArgs e) { base.OnMouseLeave(e); _hover = false; _down = false; Animate(); }

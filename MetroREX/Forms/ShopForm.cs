@@ -47,8 +47,6 @@ internal sealed class ShopForm : Form
         _cartButton = Ui.PrimaryButton(this, "Cos (0)", (_, _) => OpenCart());
         _cartButton.Margin = new Padding(LogicalToDeviceUnits(12), 0, 0, 0);
 
-        // Notificari si „Contul meu” (comenzi, istoric, wish list, cupoane, abonamente, setari, logout)
-        // apar doar pentru utilizatorii autentificati (vezi UpdateAccountButtons).
         _actions = new FlowLayoutPanel
         {
             Dock = DockStyle.Right,
@@ -99,9 +97,6 @@ internal sealed class ShopForm : Form
 
     public ShopServices Services { get; }
 
-    // ===== Navigare =====
-
-    /// <summary>Deschide un ecran nou; cel curent ramane in istoric pentru „Inapoi”.</summary>
     public void Navigate(Func<ViewBase> factory)
     {
         ArgumentNullException.ThrowIfNull(factory);
@@ -129,13 +124,11 @@ internal sealed class ShopForm : Form
         Navigate(() => new CategoriesView(this));
     }
 
-    /// <summary>Schimba „reteta” ecranului curent fara sa-l reconstruiasca (ex.: ordinea de sortare aleasa).</summary>
     public void SetCurrentFactory(Func<ViewBase> factory) => _currentFactory = factory;
 
     public void RefreshCartCount() =>
         _cartButton.Text = $"Cos ({Services.Cart.Current.Items.Sum(item => item.Quantity)})";
 
-    /// <summary>Blocheaza navigarea cat timp se trimite o comanda.</summary>
     public void SetBusy(bool busy)
     {
         _actions.Enabled = !busy;
@@ -151,7 +144,6 @@ internal sealed class ShopForm : Form
         }
     }
 
-    /// <summary>Deschide o sectiune, daca nu este deja ecranul curent.</summary>
     private void Open<TView>(Func<TView> factory) where TView : ViewBase
     {
         if (_currentView is not TView)
@@ -159,8 +151,6 @@ internal sealed class ShopForm : Form
             Navigate(factory);
         }
     }
-
-    // ===== Meniul „Contul meu” =====
 
     private ContextMenuStrip BuildAccountMenu()
     {
@@ -180,6 +170,8 @@ internal sealed class ShopForm : Form
 
         Item("Comenzi active", (_, _) => Open(() => new ActiveOrdersView(this)));
         Item("Istoricul comenzilor", (_, _) => Open(() => new OrderHistoryView(this)));
+        Item("Retururi", (_, _) => Open(() => new ReturnsView(this)));
+        Item("T-Rex Points", (_, _) => Open(() => new LoyaltyView(this)));
         Item("Wish list", (_, _) => Open(() => new WishListView(this)));
         Item("Cupoanele mele", (_, _) => Open(() => new CouponsView(this)));
         Item("Abonamente", (_, _) => Open(() => new SubscriptionsView(this)));
@@ -192,14 +184,12 @@ internal sealed class ShopForm : Form
     private void ShowAccountMenu() =>
         _accountMenu.Show(_accountButton, new Point(0, _accountButton.Height));
 
-    /// <summary>Iesirea din cont: magazinul se inchide, iar fereastra principala reapare (vezi MainForm.OpenShop).</summary>
     private void Logout()
     {
         Services.Auth.Logout();
         Close();
     }
 
-    /// <summary>Butoanele rezervate utilizatorilor autentificati.</summary>
     private void UpdateAccountButtons()
     {
         var user = Services.Session.CurrentUser;
@@ -214,7 +204,6 @@ internal sealed class ShopForm : Form
         RefreshNotificationCount();
     }
 
-    /// <summary>Numarul de notificari necitite, in antet.</summary>
     public void RefreshNotificationCount()
     {
         if (Services.Session.CurrentUser is not { } user)
@@ -226,16 +215,14 @@ internal sealed class ShopForm : Form
         _notificationsButton.Text = unread > 0 ? $"Notificari ({unread})" : "Notificari";
     }
 
-    /// <summary>Linia portocalie de sub sectiunea curenta din antet.</summary>
     private void UpdateActiveNav()
     {
         _categoriesButton.Selected = _currentView is CategoriesView or ProductListView or ProductView;
         _notificationsButton.Selected = _currentView is NotificationsView;
         _accountButton.Selected = _currentView is ActiveOrdersView or OrderHistoryView or WishListView
-            or CouponsView or SubscriptionsView or SettingsView;
+            or CouponsView or SubscriptionsView or SettingsView or ReturnsView or NewReturnView or LoyaltyView;
     }
 
-    /// <summary>Reconstruieste ecranul curent (fara sa-l puna in istoric) daca afiseaza date care se schimba zilnic.</summary>
     private void RefreshLiveView()
     {
         if (_currentView is ILiveView && _currentFactory is not null)
@@ -244,9 +231,6 @@ internal sealed class ShopForm : Form
         }
     }
 
-    // ===== Evaluarea produselor livrate =====
-
-    /// <summary>Cere evaluarea produselor livrate, daca exista si nu e deja deschisa alta fereastra.</summary>
     private void PromptRatingsIfNeeded()
     {
         if (_modalOpen || !Visible || !RatingDialog.HasPending(Services))
@@ -296,8 +280,6 @@ internal sealed class ShopForm : Form
         }
     }
 
-    // ===== Procese de fundal =====
-
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
@@ -311,7 +293,6 @@ internal sealed class ShopForm : Form
         GoHome();
         SetStatus("Sfat: Ctrl+Shift+T schimba data pentru testare (zi noua, livrari, cupoane).", isError: false);
 
-        // La intrarea in cont: produsele livrate de la ultima vizita trebuie evaluate.
         BeginInvoke(new Action(PromptRatingsIfNeeded));
     }
 
@@ -352,11 +333,10 @@ internal sealed class ShopForm : Form
         }
 
         Sfx.Play(Sound.StationChime);
-        RefreshLiveView(); // inainte de SetStatus: schimbarea ecranului goleste bara de stare
+        RefreshLiveView();
         RefreshNotificationCount();
         SetStatus($"A inceput o zi noua ({Services.Clock.Today:dd-MM-yyyy}): preturile si cupoanele au fost actualizate.", isError: false);
 
-        // Dupa ce se termina evenimentul curent (ex.: un click in fereastra de testare).
         BeginInvoke(new Action(PromptRatingsIfNeeded));
     }
 
@@ -387,8 +367,7 @@ internal sealed class ShopForm : Form
         _statusIsError = isError;
     }
 
-    // ===== Schimbarea datei pentru testare (cerinta „metoda speciala pentru data/ora”) =====
-    // Ctrl+Shift+T = fereastra de testare, Ctrl+Shift+D = +1 zi, Ctrl+Shift+R = inapoi la ceasul real.
+    // Metoda speciala pentru schimbarea datei (testare): Ctrl+Shift+T, Ctrl+Shift+D (+1 zi), Ctrl+Shift+R (ceas real)
 
     private void OpenDebugClock()
     {

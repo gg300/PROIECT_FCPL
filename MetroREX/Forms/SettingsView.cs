@@ -1,6 +1,5 @@
 namespace MetroREX.Forms;
 
-/// <summary>Setari: schimbarea parolei, a profilului (nume, adresa, e-mail, telefon) si stergerea contului.</summary>
 internal sealed class SettingsView : ViewBase
 {
     private readonly Label _message;
@@ -19,7 +18,6 @@ internal sealed class SettingsView : ViewBase
         _message = Ui.Message(this);
         Ui.AddRow(column, _message);
 
-        // Cele trei sectiuni una sub alta; zona se deruleaza pe ferestre mici.
         var stack = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -30,7 +28,6 @@ internal sealed class SettingsView : ViewBase
         };
         stack.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 
-        // ===== Profil =====
         var profileFields = NarrowFields();
         Ui.AddSection(this, profileFields, "Profil");
         _profile = new ProfileFields(this, profileFields);
@@ -42,7 +39,6 @@ internal sealed class SettingsView : ViewBase
         Ui.AddRow(stack, profileFields);
         Ui.AddRow(stack, ButtonRow(Ui.PrimaryButton(this, "Salveaza profilul", (_, _) => SaveProfile())));
 
-        // ===== Parola =====
         var passwordFields = NarrowFields();
         Ui.AddSection(this, passwordFields, "Schimba parola");
         _currentPassword = Ui.AddField(this, passwordFields, "Parola curenta", Inputs.Password());
@@ -51,7 +47,6 @@ internal sealed class SettingsView : ViewBase
         Ui.AddRow(stack, passwordFields);
         Ui.AddRow(stack, ButtonRow(Ui.PrimaryButton(this, "Schimba parola", (_, _) => ChangePassword())));
 
-        // ===== Stergere cont =====
         var deleteFields = NarrowFields();
         Ui.AddSection(this, deleteFields, "Sterge contul");
         var warning = Ui.Muted(this, "Se sterg definitiv contul, wish list-ul, cupoanele si istoricul comenzilor.");
@@ -71,7 +66,6 @@ internal sealed class SettingsView : ViewBase
         Controls.Add(column);
     }
 
-    /// <summary>Tabel de campuri cu latime limitata, ca formularele sa nu se intinda pe tot ecranul.</summary>
     private TableLayoutPanel NarrowFields()
     {
         var fields = Ui.Fields(this);
@@ -89,8 +83,6 @@ internal sealed class SettingsView : ViewBase
         bar.Controls.Add(button);
         return bar;
     }
-
-    // ===== Actiuni =====
 
     private void SaveProfile()
     {
@@ -162,7 +154,7 @@ internal sealed class SettingsView : ViewBase
         }
 
         MessageBox.Show(this, "Contul a fost sters.", "MetroREX", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        Shell.Close(); // inapoi la meniul principal
+        Shell.Close();
     }
 
     private void Fail(string error, Control field)

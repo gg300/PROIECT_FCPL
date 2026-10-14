@@ -35,6 +35,16 @@ Copiaza `Storage/email.sample.json` in `Storage/email.json` si completeaza datel
 (pentru Gmail: o *App Password* din contul Google, nu parola obisnuita). Fara acest fisier
 comanda se plaseaza normal, dar aplicatia anunta ca e-mailul nu a putut fi trimis.
 
+## Functionalitati suplimentare (in afara cerintei)
+
+| # | Functionalitate | Unde |
+|---|---|---|
+| 1 | **Abonamente la vanzatori**: 10% reducere la produsele vanzatorilor la care esti abonat (max. 3) | `SubscriptionService`, `SubscriptionsView` |
+| 2 | **T-Rex Points (loialitate)**: 50 de puncte bonus la crearea contului, 1 punct / 10 lei platiti la livrare, niveluri Bronz / Argint (x1.25) / Aur (x1.5), folosire la checkout (1 punct = 0,10 lei, max. 50% din suma) | `LoyaltyService`, `LoyaltyView`, `CheckoutView` |
+| 3 | **Retururi (RMA)**: in 14 zile de la livrare; Cerere → Aprobat (a doua zi) → Finalizat (a treia zi): stocul revine in Excel, rambursare pe metoda de plata sau in puncte (+10%), punctele castigate pe partea returnata se anuleaza | `ReturnService`, `ReturnsView`, `NewReturnView` |
+
+Contul demo are 322 de puncte (nivel Argint) si o comanda livrata care poate fi returnata.
+
 ## Fisiere de date
 
 | Fisier | Continut |
