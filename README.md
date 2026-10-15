@@ -12,14 +12,6 @@ Proiectul 5 – Online site management. Echipa: Timotei si George.
 Datele de lucru se copiaza la build in `bin/.../Storage/` si acolo sunt modificate de aplicatie
 (fisierele din `MetroREX/Storage/` raman ca stare initiala).
 
-## Cont demo
-
-| Utilizator | Parola |
-|---|---|
-| `demo` | `Demo1234` |
-
-Are deja: 3 produse in wish list, o comanda livrata (cu produse de evaluat) si o comanda activa.
-
 ## Taste pentru testare (in magazin)
 
 | Taste | Ce face |
