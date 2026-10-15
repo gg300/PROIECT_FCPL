@@ -43,7 +43,8 @@ internal sealed class ShopForm : Form
         _categoriesButton = Ui.NavButton(this, "Categorii", (_, _) => GoHome());
         _notificationsButton = Ui.NavButton(this, "Notificari", (_, _) => Open(() => new NotificationsView(this)));
         _accountMenu = BuildAccountMenu();
-        _accountButton = Ui.NavButton(this, "Contul meu ▾", (_, _) => ShowAccountMenu());
+        _accountButton = Ui.NavButton(this, "Contul meu", (_, _) => ShowAccountMenu());
+        _accountButton.Chevron = true;
         _cartButton = Ui.PrimaryButton(this, "Cos (0)", (_, _) => OpenCart());
         _cartButton.Margin = new Padding(LogicalToDeviceUnits(12), 0, 0, 0);
 
@@ -161,11 +162,12 @@ internal sealed class ShopForm : Form
             Padding = new Padding(LogicalToDeviceUnits(4)),
         };
 
-        void Item(string text, EventHandler onClick)
+        ToolStripMenuItem Item(string text, EventHandler onClick)
         {
-            var item = new ToolStripMenuItem(text) { Padding = new Padding(LogicalToDeviceUnits(8), LogicalToDeviceUnits(6), LogicalToDeviceUnits(8), LogicalToDeviceUnits(6)) };
+            var item = new ToolStripMenuItem(text);
             item.Click += onClick;
             menu.Items.Add(item);
+            return item;
         }
 
         Item("Comenzi active", (_, _) => Open(() => new ActiveOrdersView(this)));
@@ -177,7 +179,9 @@ internal sealed class ShopForm : Form
         Item("Abonamente", (_, _) => Open(() => new SubscriptionsView(this)));
         Item("Setari", (_, _) => Open(() => new SettingsView(this)));
         menu.Items.Add(new ToolStripSeparator());
-        Item("Logout", (_, _) => Logout());
+        Item("Logout", (_, _) => Logout()).Tag = AccountMenuStyle.Danger;
+
+        AccountMenuStyle.Apply(menu); // dupa ce sunt adaugate toate elementele: tema inchisa, hover portocaliu, colturi rotunjite
         return menu;
     }
 
@@ -198,7 +202,7 @@ internal sealed class ShopForm : Form
 
         if (user is not null)
         {
-            _accountButton.Text = $"{user.Username} ▾";
+            _accountButton.Text = user.Username;
         }
 
         RefreshNotificationCount();

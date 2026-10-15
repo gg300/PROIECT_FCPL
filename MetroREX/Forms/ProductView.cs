@@ -1,3 +1,4 @@
+using MetroREX.Controls;
 using MetroREX.Models;
 using MetroREX.Services;
 
@@ -96,7 +97,7 @@ internal sealed class ProductView : ViewBase
             ForeColor = Theme.Ink,
         });
         Ui.AddField(this, fields, "Stoc disponibil", Value(product.InStock ? $"{product.Quantity} bucati" : "Epuizat"));
-        Ui.AddField(this, fields, "Evaluare", Value(StarsText(product)));
+        Ui.AddField(this, fields, "Evaluare", RatingDisplay(product));
         Ui.AddField(this, fields, "Vanzator", Value(string.IsNullOrWhiteSpace(product.Seller) ? "-" : product.Seller));
 
         if (product.Colors.Count > 0)
@@ -177,15 +178,37 @@ internal sealed class ProductView : ViewBase
         return text;
     }
 
-    private static string StarsText(Product product)
+    private Control RatingDisplay(Product product)
     {
-        if (product.RatingCount == 0)
+        var flow = new FlowLayoutPanel
         {
-            return "Fara evaluari";
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            WrapContents = false,
+            FlowDirection = FlowDirection.LeftToRight,
+            BackColor = Color.Transparent,
+            Margin = Padding.Empty,
+        };
+
+        if (product.RatingCount > 0)
+        {
+            var full = (int)Math.Round(product.Rating, MidpointRounding.AwayFromZero);
+            flow.Controls.Add(new StarRating(LogicalToDeviceUnits(18))
+            {
+                Value = full,
+                ReadOnly = true,
+                Margin = new Padding(0, LogicalToDeviceUnits(2), LogicalToDeviceUnits(8), 0),
+            });
         }
 
-        var full = (int)Math.Round(product.Rating, MidpointRounding.AwayFromZero);
-        return $"{new string('★', full)}{new string('☆', 5 - full)}  {Ui.RatingText(product)}";
+        flow.Controls.Add(new Label
+        {
+            Text = Ui.RatingText(product),
+            AutoSize = true,
+            ForeColor = Theme.Ink,
+            Margin = new Padding(0, LogicalToDeviceUnits(3), 0, 0),
+        });
+        return flow;
     }
 
     private void RefreshStock()

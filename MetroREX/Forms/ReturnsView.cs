@@ -126,9 +126,9 @@ internal sealed class ReturnsView : ViewBase, ILiveView
     private static string StagesText(ReturnRequest request)
     {
         static string Stop(bool done, string name, DateTime? date) =>
-            $"{(done ? "●" : "○")} {name}{(date is { } value ? $" ({value:dd-MM})" : string.Empty)}";
+            $"{(done ? Symbols.Dot : Symbols.DotEmpty)} {name}{(date is { } value ? $" ({value:dd-MM})" : string.Empty)}";
 
-        return string.Join("  ──  ", new[]
+        return string.Join($"  {Symbols.Rule}  ", new[]
         {
             Stop(true, "Cerere", request.RequestDate),
             Stop(request.Status >= ReturnStatus.Approved, "Aprobat", request.ApprovedDate),

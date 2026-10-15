@@ -83,13 +83,13 @@ internal sealed class LoyaltyView : ViewBase, ILiveView
 
         Ui.AddRow(left, Ui.Section(this, "Cum functioneaza"));
         var rules = Ui.Muted(this,
-            $"• La crearea contului primesti {LoyaltyService.WelcomeBonus} de puncte bonus." + Environment.NewLine +
-            $"• Primesti 1 punct la fiecare {LoyaltyService.LeiPerEarnedPoint:0} lei platiti, cand comanda este livrata, " +
+            $"{Symbols.Bullet} La crearea contului primesti {LoyaltyService.WelcomeBonus} de puncte bonus." + Environment.NewLine +
+            $"{Symbols.Bullet} Primesti 1 punct la fiecare {LoyaltyService.LeiPerEarnedPoint:0} lei platiti, cand comanda este livrata, " +
             "inmultit cu bonusul nivelului." + Environment.NewLine +
-            $"• La finalizarea comenzii, 1 punct = {LoyaltyService.PointValue:N2} lei; poti plati cu puncte cel mult " +
+            $"{Symbols.Bullet} La finalizarea comenzii, 1 punct = {LoyaltyService.PointValue:N2} lei; poti plati cu puncte cel mult " +
             $"{LoyaltyService.MaxRedeemShare:P0} din suma." + Environment.NewLine +
-            "• Punctele se cumuleaza cu cupoanele si cu reducerea de abonament." + Environment.NewLine +
-            "• La un retur, punctele castigate pe produsele returnate se anuleaza; rambursarea in puncte " +
+            $"{Symbols.Bullet} Punctele se cumuleaza cu cupoanele si cu reducerea de abonament." + Environment.NewLine +
+            $"{Symbols.Bullet} La un retur, punctele castigate pe produsele returnate se anuleaza; rambursarea in puncte " +
             $"primeste +{ReturnService.PointsRefundBonus:P0} bonus.");
         rules.MaximumSize = new Size(LogicalToDeviceUnits(480), 0);
         Ui.AddRow(left, rules, fill: true);

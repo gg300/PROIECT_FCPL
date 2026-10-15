@@ -21,6 +21,15 @@ internal sealed class RoundedButton : Button
 
     public bool Arrow { get; set; }
 
+    private bool _chevron;
+
+    /// <summary>Deseneaza un chevron (v) dupa text, pentru butoane care deschid un meniu.</summary>
+    public bool Chevron
+    {
+        get => _chevron;
+        set { _chevron = value; Invalidate(); Parent?.PerformLayout(); }
+    }
+
     public bool Selected
     {
         get => _selected;
@@ -40,6 +49,8 @@ internal sealed class RoundedButton : Button
     private int Radius => LogicalToDeviceUnits(10);
     private int ArrowWidth => LogicalToDeviceUnits(14);
     private int ArrowGap => LogicalToDeviceUnits(8);
+    private int ChevronWidth => LogicalToDeviceUnits(10);
+    private int ChevronGap => LogicalToDeviceUnits(7);
 
     private string DisplayText(out bool hasArrow)
     {
@@ -53,7 +64,7 @@ internal sealed class RoundedButton : Button
     {
         var text = DisplayText(out var hasArrow);
         var size = TextRenderer.MeasureText(text, Font);
-        int extra = hasArrow ? ArrowWidth + ArrowGap : 0;
+        int extra = (hasArrow ? ArrowWidth + ArrowGap : 0) + (Chevron ? ChevronWidth + ChevronGap : 0);
         return new Size(
             size.Width + extra + Padding.Horizontal + LogicalToDeviceUnits(24),
             Math.Max(MinimumSize.Height, size.Height + LogicalToDeviceUnits(16)));
@@ -260,13 +271,13 @@ internal sealed class RoundedButton : Button
     {
         int textWidth = TextRenderer.MeasureText(g, text, Font, new Size(int.MaxValue, int.MaxValue),
             TextFormatFlags.NoPadding).Width;
-        return hasArrow ? ArrowWidth + ArrowGap + textWidth : textWidth;
+        return textWidth + (hasArrow ? ArrowWidth + ArrowGap : 0) + (Chevron ? ChevronGap + ChevronWidth : 0);
     }
 
     private void PaintCenteredText(Graphics g, RectangleF rect, string text, Color fore, bool hasArrow)
     {
         var bounds = Rectangle.Round(rect);
-        if (!hasArrow)
+        if (!hasArrow && !Chevron)
         {
             TextRenderer.DrawText(g, text, Font, bounds, fore,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
@@ -274,14 +285,17 @@ internal sealed class RoundedButton : Button
             return;
         }
 
-        int total = ContentWidth(g, text, true);
-        int textWidth = total - ArrowWidth - ArrowGap;
+        int textWidth = TextRenderer.MeasureText(g, text, Font, new Size(int.MaxValue, int.MaxValue),
+            TextFormatFlags.NoPadding).Width;
+        int total = ContentWidth(g, text, hasArrow);
         int x = bounds.X + (bounds.Width - total) / 2;
         int cy = bounds.Y + bounds.Height / 2;
 
-        float head = ArrowWidth * 0.42f;
-        using (var pen = new Pen(fore, 2f) { StartCap = LineCap.Round, EndCap = LineCap.Round, LineJoin = LineJoin.Round })
+        using var pen = new Pen(fore, 2f) { StartCap = LineCap.Round, EndCap = LineCap.Round, LineJoin = LineJoin.Round };
+
+        if (hasArrow)
         {
+            float head = ArrowWidth * 0.42f;
             g.DrawLine(pen, x + 1, cy, x + ArrowWidth, cy);
             g.DrawLines(pen, new[]
             {
@@ -289,11 +303,24 @@ internal sealed class RoundedButton : Button
                 new PointF(x + 1, cy),
                 new PointF(x + 1 + head, cy + head),
             });
+            x += ArrowWidth + ArrowGap;
         }
 
-        TextRenderer.DrawText(g, text, Font,
-            new Rectangle(x + ArrowWidth + ArrowGap, bounds.Y, textWidth + 4, bounds.Height), fore,
+        TextRenderer.DrawText(g, text, Font, new Rectangle(x, bounds.Y, textWidth + 4, bounds.Height), fore,
             TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+
+        if (Chevron)
+        {
+            float w = ChevronWidth;
+            float h = w * 0.55f;
+            float cx = x + textWidth + ChevronGap + w / 2f;
+            g.DrawLines(pen, new[]
+            {
+                new PointF(cx - w / 2f, cy - h / 2f + 1),
+                new PointF(cx, cy + h / 2f + 1),
+                new PointF(cx + w / 2f, cy - h / 2f + 1),
+            });
+        }
     }
 
     private void PaintCardText(Graphics g, RectangleF rect, string text, Color fore)

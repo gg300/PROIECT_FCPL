@@ -1,3 +1,4 @@
+using MetroREX.Controls;
 using MetroREX.Services;
 
 namespace MetroREX.Forms;
@@ -56,12 +57,11 @@ internal sealed class RatingDialog : Form
         };
         _message = Ui.Message(this);
 
-        var stars = Ui.Bar(this);
-        for (var value = 1; value <= 5; value++)
+        var stars = new StarRating(LogicalToDeviceUnits(40))
         {
-            var captured = value;
-            stars.Controls.Add(Ui.SecondaryButton(this, new string('★', value), (_, _) => Submit(captured)));
-        }
+            Margin = new Padding(0, LogicalToDeviceUnits(4), 0, LogicalToDeviceUnits(8)),
+        };
+        stars.Rated += (_, value) => Submit(value);
 
         var later = Ui.Bar(this);
         later.Controls.Add(Ui.SecondaryButton(this, "Mai tarziu", (_, _) => Close()));

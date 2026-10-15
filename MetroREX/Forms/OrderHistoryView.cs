@@ -81,7 +81,7 @@ internal sealed class OrderHistoryView : ViewBase, ILiveView
         for (var index = 0; index < order.Items.Count; index++)
         {
             var item = order.Items[index];
-            var stars = item.Rating is { } rating ? $"   {new string('★', rating)}{new string('☆', 5 - rating)}" : string.Empty;
+            var stars = item.Rating is { } rating ? $"   Nota: {rating}/5" : string.Empty;
             var returned = Services.Returns.ReturnedQuantity(order, item.ProductId);
             var returnedText = returned > 0 ? $"   (returnat: {returned} buc.)" : string.Empty;
             Write($"Produs {index + 1}: {item.ProductName} / Pret: {item.UnitPrice:N2} lei / Cantitate: {item.Quantity} / Total: {item.Total:N2} lei{stars}{returnedText}");
