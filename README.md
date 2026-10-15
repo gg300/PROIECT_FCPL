@@ -4,9 +4,9 @@ Proiectul 5 – Online site management. Echipa: Timotei si George.
 
 ## Cum se ruleaza
 
-1. Instaleaza **.NET 8 SDK** (verificare: `dotnet --list-sdks`).
+1. Instaleaza **.NET 8 SDK** (verificare: `dotnet --list-sdks`). Pe Linux poti folosi `dotnet-install.sh`.
 2. Deschide `MetroREX/MetroREX.csproj` in Rider sau Visual Studio si apasa Run.
-   Din terminal: `cd MetroREX` si apoi `dotnet run`.
+   Din terminal: `cd MetroREX` si apoi `dotnet run` (sau `./run.sh`).
 3. La primul build se descarca pachetul **ClosedXML** (citirea/scrierea Excel), deci e nevoie de internet.
 
 Datele de lucru se copiaza la build in `bin/.../Storage/` si acolo sunt modificate de aplicatie
@@ -52,32 +52,120 @@ Contul demo are 322 de puncte (nivel Argint) si o comanda livrata care poate fi 
 | `Storage/products.xlsx` | foaia **Products** (produse, preturi, stoc, culori, rating) si foaia **Specs** (specificatii: ProductId / Name / Value) |
 | `Storage/users.json` | conturi, profil, wish list, cupoane, comenzi, notificari |
 | `Storage/coupons.txt` | cupoanele generate zilnic, pentru magazin (`COD|categorie|expirare|procent`) |
-| `Storage/state.json` | ultima zi in care au rulat procesele zilnice |
+| `Storage/email.json` | setarile SMTP reale (nu se pune in git); model: `email.sample.json` |
+| `Storage/state.json` | ultima zi in care au rulat procesele zilnice (se creeaza la rulare) |
 
-## Structura
+## Arhitectura pe scurt
+
+Aplicatia are straturi clare, iar dependentele merg intr-o singura directie:
+
+```text
+Forms / Controls  (UI)  →  Services (logica)  →  Data (citire/scriere)  →  Storage (fisiere)
+                                  ↑
+                               Models (structurile de date folosite de toate straturile)
+```
+
+- **Forms** nu au logica de business: apeleaza serviciile si afiseaza rezultatul.
+- **Services** contin regulile magazinului (preturi, cupoane, comenzi, retururi, puncte).
+- **Data** stie doar sa citeasca si sa scrie fisiere (JSON, Excel, txt), fara reguli de magazin.
+
+## Structura proiectului
 
 ```text
 MetroREX/
-├── Program.cs, Theme.cs, Sfx.cs
+├── Program.cs              punctul de intrare: porneste aplicatia
+├── Theme.cs                culorile, fonturile si stilul comun al aplicatiei
+├── Sfx.cs                  sunetele (pornit/oprit cu Ctrl+M)
+├── MetroREX.csproj         configuratia proiectului (.NET 8, pachetul ClosedXML)
+├── run.sh                  script de rulare pentru terminal
+├── dotnet-install.sh       script de instalare a .NET SDK
+├── fixstupidshit.sh        script auxiliar de reparare/curatare (uz intern)
 ├── assets/                 logo si sunete
-├── Controls/               controale desenate manual (butoane, carduri, antet)
-├── Data/                   citire/scriere JSON, Excel (ClosedXML), coupons.txt
-├── Models/                 User, Product, Order, Coupon, Notification ...
+├── mock_data/              date de test / de exemplu pentru generarea starii initiale
+├── bin/, obj/, out/        rezultatul build-ului (generate automat, nu se editeaza)
+│
+├── Controls/               controale desenate manual
+│   ├── AccessCard            card pentru optiunile de acces (login / cont nou / fara cont)
+│   ├── CategoryTile          placa unei categorii de produse
+│   ├── HeroPanel             panoul mare din antet
+│   ├── LogoBox, Wordmark     logo-ul si numele „MetroREX”
+│   ├── RoundedButton         buton cu colturi rotunjite
+│   ├── StarRating            afisarea/alegerea stelelor 1–5
+│   ├── StationButton         buton in stilul de „statie de metrou”
+│   ├── StationLine           linia decorativa de metrou
+│   └── Surface               suprafata/cardul de baza pe care se aseaza restul
+│
+├── Data/                   citire/scriere fisiere
+│   ├── AppPaths              caile catre fisierele din Storage
+│   ├── AtomicFile            scriere sigura (fisier temporar, apoi inlocuire)
+│   ├── IStore                interfata comuna pentru stocarea datelor
+│   ├── JsonStore             citire/scriere users.json si state.json
+│   ├── ExcelProductStore     citire/scriere products.xlsx (ClosedXML)
+│   └── CouponFileStore       citire/scriere coupons.txt
+│
+├── Models/                 structurile de date
+│   ├── AppState              starea aplicatiei (ultima zi procesata etc.)
+│   ├── User, UserProfile     cont si date de profil
+│   ├── Product               produs
+│   ├── Cart, CartItem        cosul de cumparaturi
+│   ├── Order, OrderStatus    comanda si starile ei
+│   ├── PaymentMethod, CardDetails   metoda de plata si datele cardului
+│   ├── Coupon                cupon de reducere
+│   ├── Loyalty               puncte si nivel de loialitate
+│   ├── Notification          notificare pentru utilizator
+│   └── ReturnRequest         cerere de retur
+│
 ├── Services/               logica magazinului
-│   ├── ShopRuntime.cs        procesele asincrone: zi noua + sincronizare Excel la 10 s
-│   ├── Clock.cs              ceasul aplicatiei (poate fi schimbat pentru testare)
-│   ├── PricingService.cs     variatia zilnica ±20% din pretul de baza
-│   ├── InventoryService.cs   „produs din nou pe stoc”
-│   ├── CouponService.cs      cupon zilnic AAA-BBB-CCC, stergerea celor expirate
-│   ├── OrderService.cs       livrari, istoric, evaluari 1–5
-│   └── CheckoutService.cs    cupon, profil vizitator, plata, e-mail
-└── Forms/                  ferestrele si ecranele
-    ├── MainForm               Login / Creare cont / Fara cont
-    ├── LoginForm, RegisterForm
-    ├── ShopForm               fereastra magazinului (antet, navigare, meniul „Contul meu”)
-    ├── CategoriesView, ProductListView (sortare dupa pret), ProductView (detalii + specificatii)
-    ├── CartView, CheckoutView
-    ├── ActiveOrdersView, OrderHistoryView, RatingDialog
-    ├── WishListView, CouponsView, NotificationsView, SubscriptionsView, SettingsView
-    └── DebugClockDialog       metoda speciala de schimbare a datei
+│   ├── ShopServices          grupeaza toate serviciile (un singur punct de acces)
+│   ├── ShopRepository        accesul comun la date pentru servicii
+│   ├── ShopRuntime           procesele asincrone: zi noua + sincronizare Excel la 10 s
+│   ├── Clock                 ceasul aplicatiei (poate fi schimbat pentru testare)
+│   ├── Session               utilizatorul curent
+│   ├── AuthService           creare cont si login
+│   ├── PasswordHasher        hash-ul parolelor
+│   ├── Validation            reguli de validare a campurilor
+│   ├── ErrorMessages         textele erorilor
+│   ├── Result                rezultat „reusit / eroare” returnat de servicii
+│   ├── Money                 calcule si formatare pentru sume
+│   ├── CatalogService        listarea produselor si categoriilor
+│   ├── PriceSort             sortarea dupa pret
+│   ├── PricingService        variatia zilnica ±20% din pretul de baza
+│   ├── ProductSyncService    sincronizarea cu products.xlsx
+│   ├── InventoryService      stoc si „produs din nou pe stoc”
+│   ├── CartService           operatii pe cos
+│   ├── WishListService       wish list
+│   ├── CouponService         cupon zilnic AAA-BBB-CCC, stergerea celor expirate
+│   ├── SubscriptionService   abonamente la vanzatori
+│   ├── LoyaltyService        T-Rex Points
+│   ├── CheckoutRequest       datele trimise la finalizarea comenzii
+│   ├── OrderQuote            calculul totalului (reduceri, puncte)
+│   ├── CheckoutService       cupon, profil vizitator, plata, e-mail
+│   ├── CheckoutOutcome       rezultatul finalizarii comenzii
+│   ├── OrderService          livrari, istoric, evaluari 1–5
+│   ├── ReturnService         retururi (RMA)
+│   ├── NotificationService   notificari
+│   └── Email/
+│       ├── IEmailSender          interfata de trimitere e-mail
+│       ├── SmtpEmailSender       trimiterea prin SMTP
+│       ├── SmtpSettings          citirea setarilor din email.json
+│       └── OrderConfirmationEmail  continutul e-mailului de confirmare
+│
+├── Forms/                  ferestrele si ecranele
+│   ├── MainForm              Login / Creare cont / Fara cont
+│   ├── AuthFormBase          baza comuna pentru LoginForm si RegisterForm
+│   ├── LoginForm, RegisterForm
+│   ├── ShopForm              fereastra magazinului (antet, navigare, meniul „Contul meu”)
+│   ├── AccountMenuStyle      stilul meniului „Contul meu”
+│   ├── ViewBase              baza comuna a tuturor ecranelor din magazin
+│   ├── CategoriesView, ProductListView (sortare dupa pret), ProductView (detalii + specificatii)
+│   ├── CartView, CheckoutView
+│   ├── ActiveOrdersView, OrderHistoryView, RatingDialog
+│   ├── WishListView, CouponsView, NotificationsView, SubscriptionsView, SettingsView
+│   ├── LoyaltyView           puncte si nivel
+│   ├── ReturnsView, NewReturnView   lista retururilor si cererea de retur noua
+│   ├── ProfileFields, Inputs   campuri de formular reutilizabile
+│   ├── Ui, Symbols           ajutoare de desenare si simboluri
+│   └── DebugClockDialog      metoda speciala de schimbare a datei
+│
+└── Storage/                datele initiale (vezi „Fisiere de date”)
 ```
